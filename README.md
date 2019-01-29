@@ -1,4 +1,4 @@
-Addressbook Tutorial V2.0
+Addressbook Tutorial V2.0.1
 ====================
 
 This tutorial teaches you some of the basic concepts in [Vaadin Framework](https://vaadin.com). It is meant to be
