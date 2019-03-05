@@ -3,7 +3,7 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.devopsdemo.tutorial</groupId>
-    <artifactId>addressbook</artifactId>
+    <artifactId>sampleapp</artifactId>
     <packaging>war</packaging>
     <version>2.0</version>
     <name>Vaadin Addressbook example</name>
@@ -193,7 +193,7 @@
 			</plugin>
 
         </plugins>
-		<finalName>addressbook</finalName>
+		<finalName>sampleapp</finalName>
     </build>
 	
 	  
@@ -369,7 +369,7 @@
                         <dependencies>
                             <dependency>
                                 <groupId>com.devopsdemo.tutorial</groupId>
-                                <artifactId>addressbook</artifactId>
+                                <artifactId>sampleapp</artifactId>
                                 <version>${project.version}</version>
                             </dependency>
                         </dependencies>
@@ -408,7 +408,7 @@
                         <dependencies>
                             <dependency>
                                 <groupId>com.devopsdemo.tutorial</groupId>
-                                <artifactId>addressbook</artifactId>
+                                <artifactId>sampleapp</artifactId>
                                 <version>${project.version}</version>
                             </dependency>
                         </dependencies>
@@ -450,7 +450,7 @@
                         <artifactId>maven-checkstyle-plugin</artifactId>
                         <version>2.9.1</version>
                         <configuration>
-                            <configLocation>addressbook-build/checkstyle.xml</configLocation>
+                            <configLocation>sampleapp-build/checkstyle.xml</configLocation>
                         </configuration>
                     </plugin>
                     <plugin>
