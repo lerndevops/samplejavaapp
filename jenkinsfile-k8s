@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('checkout repo') {
 			steps {
-				git url: 'https://github.com/lerndevops/DevOpsClassCodes.git '
+				git url: 'https://github.com/lerndevops/samplejavaapp.git'
             }
         }
         stage('build artifact') {
@@ -13,7 +13,7 @@ pipeline {
         }
         stage('build docker image') {
 			steps {
-				sh 'docker build -t lerndevops/addressbook .'
+				sh 'docker build -t lerndevops/samplejavaapp .'
             }	
         }
         stage('push docker image') {
@@ -21,12 +21,12 @@ pipeline {
 				withCredentials([string(credentialsId: 'DOCKER_HUB_PWD', variable: 'DOCKER_HUB_PWD')]) {
                 sh "docker login -u lerndevops -p ${DOCKER_HUB_PWD}"
 				}
-				sh 'docker push lerndevops/addressbook'
+				sh 'docker push lerndevops/samplejavaapp'
 			}
         }
         stage('Deploy to K8s') {
 			steps {
-				sh 'kubectl apply -f addressbook-deploy-k8s.yml'
+				sh 'kubectl apply -f deploy/sampleapp-deploy-k8s.yml'
 			}
         }
     }

@@ -3,14 +3,12 @@ pipeline {
     stages {
         stage('compile') {
 	   steps {
-                echo 'compiling..'
-		git url: 'https://github.com/lerndevops/DevOpsClassCodes'
+		git url: 'https://github.com/lerndevops/samplejavaapp.git'
 		sh script: 'mvn compile'
            }
         }
         stage('codereview-pmd') {
 	   steps {
-                echo 'codereview..'
 		sh script: 'mvn -P metrics pmd:pmd'
            }
 	   post {
@@ -21,7 +19,6 @@ pipeline {
         }
         stage('unit-test') {
 	   steps {
-                echo 'codereview..'
 		sh script: 'mvn test'
            }
 	   post {
@@ -32,7 +29,6 @@ pipeline {
         }
         stage('metric-check') {
 	   steps {
-                echo 'unit test..'
 		sh script: 'mvn cobertura:cobertura -Dcobertura.report.format=xml'
            }
 	   post {
@@ -43,7 +39,6 @@ pipeline {
         }
         stage('package') {
 	   steps {
-                echo 'metric-check..'
 		sh script: 'mvn package'	
            }		
         }
