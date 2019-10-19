@@ -1,0 +1,4 @@
+http://18.222.120.108:9000   sonarqube --- admin/admin
+
+
+http://18.222.120.108:8081/artifactory   ----- JFrog --- admin/password
