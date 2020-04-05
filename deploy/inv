@@ -6,13 +6,3 @@ ip2
 ip1
 ip2
 
-[qa:vars]
-ansible_user=devops
-ansible_ssh_pass=jdokuans
-ansible_sudo_pass=jdokuans
-
-[prod:vars]
-ansible_user=devops
-ansible_ssh_pass=jdokuans
-ansible_sudo_pass=jdokuans
-
