@@ -28,7 +28,7 @@ pipeline {
                }
            }			
         }
-        stage('metric-check') {
+        stage('codecoverage') {
 	   steps {
 		sh script: '/opt/apache-maven-3.6.3/bin/mvn cobertura:cobertura -Dcobertura.report.format=xml'
            }
