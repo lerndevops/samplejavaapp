@@ -102,11 +102,6 @@
 			<artifactId>slf4j-api</artifactId>
 			<version>1.7.7</version>
 		</dependency>
-	        <dependency>
-                       <groupId>com.sun.java</groupId>
-                       <artifactId>tools</artifactId>
-                       <version>11.0.1</version>
-                </dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-simple</artifactId>
