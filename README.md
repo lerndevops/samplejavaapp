@@ -1,4 +1,3 @@
 
-Sample Java Applicaiton V1.12
-
+Sample Java Applicaiton V1.12kad
 
