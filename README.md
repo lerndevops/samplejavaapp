@@ -1,5 +1,5 @@
 
-Sample Java Applicaiton V1.12kadsdfasdf
+Sample Java Applicaiton V1.12
 
 kajsdhfsdfassgsdfg
 asdfasdasdfasasdfas
