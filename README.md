@@ -1,2 +1,2 @@
 
-Sample Java Applicaiton V1.1sdf
+Sample Java Applicaiton V1.1s
