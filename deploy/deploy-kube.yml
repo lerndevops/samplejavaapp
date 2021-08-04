@@ -14,8 +14,8 @@
             echo "No app service found"
          fi
     - name: deploy app
-      command: kubectl create deploy myapp --image=lerndevops/samplejavaapp:{{ build }}
+      shell: kubectl create deploy myapp --image=lerndevops/samplejavaapp:{{ build }}
     - name: increase replicas 
-      command: kubectl scale deploy myapp --replicas=2
+      shell: kubectl scale deploy myapp --replicas=2
     - name: deploy service
-      command: kubectl expose deploy myapp --name myapp-svc --port 8080 --type NodePort
+      shell: kubectl expose deploy myapp --name myapp-svc --port 8080 --type NodePort
