@@ -60,15 +60,6 @@ public class GenericComparator implements Comparator, Serializable {
 	 * <p>For Example-</p>
 	 * <p><code>PersonVO person = new PersonVO();<br />
 	 * person.setId(10001);<br />
-	 * person.setName("Jacob");<br />
-	 * person.setHeight(5.2F);<br />
-	 * person.setEmailId("jacob@example.example");<br />
-	 * person.setSalary(10500L);<br />
-	 * person.setDob(new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH).parse("Jan 1, 1970"));<br /></code><br />
-	 * <p>and person2, person3, so on.. And Defining &amp; adding all the created objects in to below list</p>
-	 * <p><code>List&lt;PersonVO&gt; persons = new ArrayList&lt;PersonVO&gt;();<br />
-	 * persons.add(person1);<br />
-	 * persons.add(person2);<br />
 	 * persons.add(person3); </code>and so on<br />
 	 *
 	 * @param sortField - a {@link java.lang.String} - which field requires sorting; as per above example "sorting required for <code>name</code> field"
