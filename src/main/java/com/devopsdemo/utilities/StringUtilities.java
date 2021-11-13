@@ -39,9 +39,7 @@ public class StringUtilities {
 	/**
 	 * The String separator for splitting a date parameter value into appropriate format. 
 	 */
-	private final static String DATEFORMAT_SEPARATOR = "@";
-	private final static String DATEFORMAT_SEPA = "@";
-	
+	private final static String DATEFORMAT_SEPARATOR = "@";	
 	/**
 	 * The method to be invoked to convert a given String value to a specific Object type
 	 */
