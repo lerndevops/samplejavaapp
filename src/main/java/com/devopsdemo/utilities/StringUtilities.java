@@ -25,6 +25,7 @@ public class StringUtilities {
 	 * The string separator for splitting a string into a list
 	 */
 	private final static String COMMA_SEPARATOR = ","; 
+	private final static String COMMA_SEP = ","; 
 	/**
 	 * The String separator for splitting a parameter value. 
 	 * Parameters are expected to be in form: "parametername=value"
