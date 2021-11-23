@@ -18,4 +18,4 @@
     - name: increase replicas 
       shell: kubectl scale deploy myapp --replicas=2
     - name: deploy service
-      shell: kubectl expose deployment myapp --name myapp-svc --type NodePort --port 80 --target-port 8080 --node-port 30001
+      shell: kubectl expose deployment myapp --name myapp-svc --type NodePort --port 80 --target-port 8080
