@@ -63,7 +63,7 @@ pipeline {
         }
         stage('Deploy to K8s') {
   	   steps {
-    		sh 'sed -i "s/bno/'"$BUILD_NUMBER"'/g" deploy/sampleapp-deploy-k8s.yml'
+    		sh 'sed -i "s/bno/\'"$BUILD_NUMBER"\'/g" deploy/sampleapp-deploy-k8s.yml'
     		sh 'kubectl apply -f deploy/sampleapp-deploy-k8s.yml'
 		}
 	}
