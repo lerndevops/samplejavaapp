@@ -12,7 +12,7 @@ spec:
   template:
     metadata:
       labels:
-        app: samplejavaapp
+        app: sampleapp
     spec:
       containers:
       - name: samplejavaapp
@@ -25,7 +25,7 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
-  name: addressbook
+  name: addressbook-svc
 spec:
   type: NodePort
   selector:
