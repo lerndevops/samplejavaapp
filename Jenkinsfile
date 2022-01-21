@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('compile') {
 	   steps {
-                echo 'compiling..'
+                echo 'compiling the code ..'
 		git url: 'https://github.com/lerndevops/samplejavaapp'
 		sh script: '/opt/apache-maven-3.8.4/bin/mvn compile'
            }
