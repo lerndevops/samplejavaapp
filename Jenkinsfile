@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('compile') {
 	   steps {
-                echo 'compiling the code ASaurav..'
+                echo 'compiling the code ASaurav..Jan22'
 		git url: 'https://github.com/lerndevops/samplejavaapp'
 		sh script: 'mvn compile'
            }
