@@ -5,7 +5,7 @@ pipeline {
 	   steps {
                 echo 'compiling the code ASaurav..'
 		git url: 'https://github.com/lerndevops/samplejavaapp'
-		sh script: '/usr/share/maven/bin/mvn compile'
+		sh script: 'mvn compile'
            }
         }
         stage('codereview-pmd') {
