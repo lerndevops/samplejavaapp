@@ -1,22 +1,30 @@
 - hosts: "{{ env }}"
   become: yes
   tasks: 
-    - name: remove any previous app services
+    - name: Deploying Application pods...
       shell: | 
-         if [ `kubectl get deploy | grep -v NAME | awk '{print $1}' | grep sampleapp | wc -l` -gt 0 ]; then  
-            kubectl delete deploy `kubectl get deploy | grep -v NAME | awk '{print $1}' | grep sampleapp`
+         if [ `kubectl get deployment | grep -v NAME | awk '{print $1}' | grep sampleapp | wc -l` -gt 0 ]; then  
+            echo "deleteing previous application deployment"
+            kubectl delete deployment `kubectl get deployment | grep -v NAME | awk '{print $1}' | grep sampleapp`
+            echo "creating new application deployment"
+            kubectl create deployment sampleapp --image=lerndevops/samplejavaapp:{{ build }}
          else 
-            echo "No app deployments found"
+            echo "Deploying Sampleapp Application"
+            kubectl create deployment sampleapp --image=lerndevops/samplejavaapp:{{ build }}
          fi
+    - name: deploying service
+      shell: |
          if [ `kubectl get svc | grep sampleapp  | awk '{print $1}' | wc -l` -gt 0 ]; then
             echo "app service found, No actions taken"
             #kubectl delete svc `kubectl get svc | grep sampleapp | awk '{print $1}'`
          else
-            echo "No app service found it will be created"
+            echo "Creating App Services"
+            kubectl expose deployment sampleapp --name sampleapp --type NodePort --port 80 --target-port 8080
          fi
-    - name: deploy app
-      shell: kubectl create deployment sampleapp --image=lerndevops/samplejavaapp:{{ build }}
     - name: increase replicas 
       shell: kubectl scale deploy sampleapp --replicas=2
-    - name: deploy service
-      shell: kubectl expose deployment sampleapp --name sampleapp --type NodePort --port 80 --target-port 8080
+      
+    #- name: deploy app
+    #  shell: kubectl create deployment sampleapp --image=lerndevops/samplejavaapp:{{ build }}
+    #- name: deploy service
+    #  shell: kubectl expose deployment sampleapp --name sampleapp --type NodePort --port 80 --target-port 8080
