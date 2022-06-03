@@ -6,14 +6,14 @@ pipeline {
                 // step1 
                 echo 'compiling..'
 		            git url: 'https://github.com/lerndevops/samplejavaapp'
-		            sh script: '/opt/apache-maven-3.8.4/bin/mvn compile'
+		            sh script: '/opt/maven/bin/mvn compile'
            }
         }
         stage('codereview-pmd') {
 	         steps {
                 // step2
                 echo 'codereview..'
-		            sh script: '/opt/apache-maven-3.8.4/bin/mvn -P metrics pmd:pmd'
+		            sh script: '/opt/maven/bin/mvn -P metrics pmd:pmd'
            }
 	         post {
                success {
@@ -25,7 +25,7 @@ pipeline {
 	          steps {
                 // step3
                 echo 'unittest..'
-	               sh script: '/opt/apache-maven-3.8.4/bin/mvn test'
+	               sh script: '/opt/maven/bin/mvn test'
             }
 	          post {
                success {
@@ -41,7 +41,7 @@ pipeline {
 	         steps {
                 // step4
                 echo 'codecoverage..'
-		            sh script: '/opt/apache-maven-3.8.4/bin/mvn cobertura:cobertura -Dcobertura.report.format=xml'
+		            sh script: '/opt/maven/bin/mvn cobertura:cobertura -Dcobertura.report.format=xml'
            }
 	         post {
                success {
@@ -53,7 +53,7 @@ pipeline {
 	         steps {
                 // step5
                 echo 'package......'
-		            sh script: '/opt/apache-maven-3.8.4/bin/mvn package'	
+		            sh script: '/opt/maven/bin/mvn package'	
            }		
         }
         stage('build & push docker image') {

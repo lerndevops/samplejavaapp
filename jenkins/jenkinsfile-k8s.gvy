@@ -8,7 +8,7 @@ pipeline {
         }
         stage('build artifact') {
 			steps {
-				sh '/opt/apache-maven-3.6.2/bin/mvn clean package'
+				sh '/opt/maven/bin/mvn clean package'
             }
         }
         stage('build docker image') {
