@@ -4,6 +4,7 @@
 
 plugins {
     id 'java'
+    id 'war'
     id 'maven-publish'
 }
 
@@ -14,11 +15,11 @@ repositories {
     }
 
     maven {
-        url = 'http://maven.vaadin.com/vaadin-addons'
+        url = 'https://maven.vaadin.com/vaadin-addons'
     }
 
     maven {
-        url = 'http://oss.sonatype.org/content/repositories/vaadin-snapshots/'
+        url = 'https://oss.sonatype.org/content/repositories/vaadin-snapshots/'
     }
 
     maven {
