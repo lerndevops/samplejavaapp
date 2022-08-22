@@ -4,14 +4,14 @@ pipeline {
     stage('compile') {
       steps {
         git 'https://github.com/krishcheeku/samplejavaapp.git'
-        sh '/opt/apache-maven-3.6.3/bin/mvn compile'
+        sh '/opt/apache-maven-3.8.6/bin/mvn compile'
         sleep 10
       }
     }
 
     stage('codereview-pmd') {
       steps {
-        sh '/opt/apache-maven-3.6.3/bin/mvn -P metrics pmd:pmd'
+        sh '/opt/apache-maven-3.8.6/bin/mvn -P metrics pmd:pmd'
       }
     }
 
@@ -23,7 +23,7 @@ pipeline {
 
       }
       steps {
-        sh '/opt/apache-maven-3.6.3/bin/mvn test'
+        sh '/opt/apache-maven-3.8.6/bin/mvn test'
       }
     }
 
@@ -35,13 +35,13 @@ pipeline {
 
       }
       steps {
-        sh '/opt/apache-maven-3.6.3/bin/mvn cobertura:cobertura -Dcobertura.report.format=xml'
+        sh '/opt/apache-maven-3.8.6/bin/mvn cobertura:cobertura -Dcobertura.report.format=xml'
       }
     }
 
     stage('package') {
       steps {
-        sh '/opt/apache-maven-3.6.3/bin/mvn clean package'
+        sh '/opt/apache-maven-3.8.6/bin/mvn clean package'
       }
     }
 
