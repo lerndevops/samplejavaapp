@@ -3,7 +3,7 @@ pipeline {
   stages {
     stage('compile') {
       steps {
-        git 'https://github.com/krishcheeku/samplejavaapp.git'
+        git 'https://github.com/krishcheeku/samplejavaapp'
         sh '/opt/apache-maven-3.8.6/bin/mvn compile'
         sleep 10
       }
