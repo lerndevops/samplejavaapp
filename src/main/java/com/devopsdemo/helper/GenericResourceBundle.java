@@ -16,7 +16,7 @@ public class GenericResourceBundle {
 				value = rb.getString(key);
 			}
 		}
-		return value;
+		return value
 	}
 	
 }
