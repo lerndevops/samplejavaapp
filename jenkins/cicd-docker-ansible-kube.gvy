@@ -39,16 +39,16 @@ stages {
     stage('build & push docker image') {
 	    steps {
 		    sh 'cd $WORKSPACE'
-		    sh 'sudo docker build --file Dockerfile --tag lerndevops/samplejavaapp:$BUILD_NUMBER .'
+		    sh 'docker build --file Dockerfile --tag lerndevops/samplejavaapp:$BUILD_NUMBER .'
 		    withCredentials([string(credentialsId: 'DOCKER_HUB_PWD', variable: 'DOCKER_HUB_PWD')]) {
-			    sh "sudo docker login -u lerndevops -p ${DOCKER_HUB_PWD}"
+			    sh "docker login -u lerndevops -p ${DOCKER_HUB_PWD}"
 		    }
-		    sh 'sudo docker push lerndevops/samplejavaapp:$BUILD_NUMBER'
+		    sh 'docker push lerndevops/samplejavaapp:$BUILD_NUMBER'
 	    }
     }
     stage('Deploy-QA') {
 	    steps {
-		    sh 'sudo ansible-playbook --inventory /root/myinv deploy/deploy-kube.yml --extra-vars "env=qa build=$BUILD_NUMBER"'
+		    sh 'ansible-playbook --inventory /root/myinv deploy/deploy-kube.yml --extra-vars "env=qa build=$BUILD_NUMBER"'
 	    }
     }
 }
