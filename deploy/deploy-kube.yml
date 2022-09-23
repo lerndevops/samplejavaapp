@@ -7,10 +7,10 @@
             echo "deleteing previous application deployment"
             kubectl delete deployment `kubectl get deployment | grep -v NAME | awk '{print $1}' | grep sampleapp`
             echo "creating new application deployment"
-            kubectl create deployment sampleapp --image=lerndevops/samplejavaapp:{{ build }}
+            kubectl create deployment sampleapp --image=irfanhaneefcl/samplejavaapp:{{ build }}
          else 
             echo "Deploying Sampleapp Application"
-            kubectl create deployment sampleapp --image=lerndevops/samplejavaapp:{{ build }}
+            kubectl create deployment sampleapp --image=irfanhaneefcl/samplejavaapp:{{ build }}
          fi
     - name: deploying service
       shell: |
@@ -25,6 +25,6 @@
       shell: kubectl scale deploy sampleapp --replicas=2
       
     #- name: deploy app
-    #  shell: kubectl create deployment sampleapp --image=lerndevops/samplejavaapp:{{ build }}
+    #  shell: kubectl create deployment sampleapp --image=irfanhaneefcl/samplejavaapp:{{ build }}
     #- name: deploy service
     #  shell: kubectl expose deployment sampleapp --name sampleapp --type NodePort --port 80 --target-port 8080
