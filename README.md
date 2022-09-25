@@ -1,3 +1,3 @@
 Sample Java Applicaiton V3.8
 
-Adding
+Removing whatever added
