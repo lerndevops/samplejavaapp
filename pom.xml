@@ -240,6 +240,7 @@
   					<groupId>org.jacoco</groupId>
   					<artifactId>jacoco-maven-plugin</artifactId>
   					<version>0.8.2</version>
+					<extensions>true</extensions>
 					<executions>
 						<execution>
 							<goals>
