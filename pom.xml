@@ -200,9 +200,7 @@
 
         </plugins>
 		<finalName>sampleapp</finalName>
-    </build>
-	
-	  
+    </build>  
     <reporting>
     <plugins>
       <plugin>
@@ -210,6 +208,73 @@
         <artifactId>maven-surefire-report-plugin</artifactId>
         <version>2.19.1</version>
       </plugin>
+                                <plugin>
+                                    <artifactId>maven-project-info-reports-plugin</artifactId>
+                                    <version>2.7</version>
+                                </plugin>
+                                <plugin>
+                                    <groupId>org.apache.maven.plugins</groupId>
+                                    <artifactId>maven-checkstyle-plugin</artifactId>
+                                    <version>3.0.1</version>
+                                    <!--<configuration>-->
+                                    <!--<configLocation>gol-checkstyle.xml</configLocation>-->
+                                    <!--</configuration>-->
+                                </plugin>
+                                <plugin>
+                                    <groupId>org.apache.maven.plugins</groupId>
+                                    <artifactId>maven-pmd-plugin</artifactId>
+                                    <version>3.2</version>
+                                    <configuration>
+                                        <targetJdk>1.8</targetJdk>
+                                        <aggregate>true</aggregate>
+                                        <format>xml</format>
+                                        <rulesets>
+                                            <ruleset>/pmd-rules.xml</ruleset>
+                                        </rulesets>
+                                        <!-- CPD options -->
+                                        <minimumTokens>20</minimumTokens>
+                                        <ignoreIdentifiers>true</ignoreIdentifiers>
+                                    </configuration>
+                                </plugin>
+				<plugin>
+  					<groupId>org.jacoco</groupId>
+  					<artifactId>jacoco-maven-plugin</artifactId>
+  					<version>0.8.2</version>
+				</plugin>
+                                <plugin>
+                                    <groupId>org.codehaus.mojo</groupId>
+                                    <artifactId>findbugs-maven-plugin</artifactId>
+                                    <version>2.4.0</version>
+                                    <configuration>
+                                        <effort>Max</effort>
+                                        <xmlOutput>true</xmlOutput>
+                                    </configuration>
+                                </plugin>
+                                <plugin>
+                                    <artifactId>maven-javadoc-plugin</artifactId>
+                                    <version>2.9.1</version>
+                                    <configuration>
+                                        <source>1.8</source>
+                                        <doclet>
+                                            gr.spinellis.umlgraph.doclet.UmlGraphDoc
+                                        </doclet>
+                                        <docletArtifact>
+                                            <groupId>gr.spinellis</groupId>
+                                            <artifactId>UmlGraph</artifactId>
+                                            <version>4.6</version>
+                                        </docletArtifact>
+                                        <additionalparam>
+                                            -inferrel -inferdep -hide java.* -collpackages
+                                            java.util.* -attributes -operations
+                                            -enumerations -enumconstants
+                                        </additionalparam>
+                                    </configuration>
+                                </plugin>
+                                <plugin>
+                                    <groupId>org.apache.maven.plugins</groupId>
+                                    <artifactId>maven-jxr-plugin</artifactId>
+                                    <version>2.4</version>
+                                </plugin>
     </plugins>
   </reporting>
   
@@ -301,77 +366,6 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-site-plugin</artifactId>
                         <version>3.3</version>
-                        <configuration>
-                            <reportPlugins>
-                                <plugin>
-                                    <artifactId>maven-project-info-reports-plugin</artifactId>
-                                    <version>2.7</version>
-                                </plugin>
-                                <plugin>
-                                    <groupId>org.apache.maven.plugins</groupId>
-                                    <artifactId>maven-checkstyle-plugin</artifactId>
-                                    <version>3.0.1</version>
-                                    <!--<configuration>-->
-                                    <!--<configLocation>gol-checkstyle.xml</configLocation>-->
-                                    <!--</configuration>-->
-                                </plugin>
-                                <plugin>
-                                    <groupId>org.apache.maven.plugins</groupId>
-                                    <artifactId>maven-pmd-plugin</artifactId>
-                                    <version>3.2</version>
-                                    <configuration>
-                                        <targetJdk>1.8</targetJdk>
-                                        <aggregate>true</aggregate>
-                                        <format>xml</format>
-                                        <rulesets>
-                                            <ruleset>/pmd-rules.xml</ruleset>
-                                        </rulesets>
-                                        <!-- CPD options -->
-                                        <minimumTokens>20</minimumTokens>
-                                        <ignoreIdentifiers>true</ignoreIdentifiers>
-                                    </configuration>
-                                </plugin>
-				<plugin>
-  					<groupId>org.jacoco</groupId>
-  					<artifactId>jacoco-maven-plugin</artifactId>
-  					<version>0.8.2</version>
-				</plugin>
-                                <plugin>
-                                    <groupId>org.codehaus.mojo</groupId>
-                                    <artifactId>findbugs-maven-plugin</artifactId>
-                                    <version>2.4.0</version>
-                                    <configuration>
-                                        <effort>Max</effort>
-                                        <xmlOutput>true</xmlOutput>
-                                    </configuration>
-                                </plugin>
-                                <plugin>
-                                    <artifactId>maven-javadoc-plugin</artifactId>
-                                    <version>2.9.1</version>
-                                    <configuration>
-                                        <source>1.8</source>
-                                        <doclet>
-                                            gr.spinellis.umlgraph.doclet.UmlGraphDoc
-                                        </doclet>
-                                        <docletArtifact>
-                                            <groupId>gr.spinellis</groupId>
-                                            <artifactId>UmlGraph</artifactId>
-                                            <version>4.6</version>
-                                        </docletArtifact>
-                                        <additionalparam>
-                                            -inferrel -inferdep -hide java.* -collpackages
-                                            java.util.* -attributes -operations
-                                            -enumerations -enumconstants
-                                        </additionalparam>
-                                    </configuration>
-                                </plugin>
-                                <plugin>
-                                    <groupId>org.apache.maven.plugins</groupId>
-                                    <artifactId>maven-jxr-plugin</artifactId>
-                                    <version>2.4</version>
-                                </plugin>
-                            </reportPlugins>
-                        </configuration>
                         <dependencies>
                             <dependency>
                                 <groupId>com.devopsdemo.tutorial</groupId>
