@@ -163,7 +163,13 @@
 
 
 		</dependencies>
-
+ <exclusions>
+            <exclusion>
+                <artifactId>tools</artifactId>
+                <groupId>com.sun</groupId>
+            </exclusion>
+ </exclusions>
+	
     <build>
         <plugins>
             <plugin>
