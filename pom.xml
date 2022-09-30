@@ -160,15 +160,14 @@
 			<artifactId>xml-security-impl</artifactId>
 			<version>1.0</version>
 		</dependency>
-
-
-		</dependencies>
  <exclusions>
             <exclusion>
                 <artifactId>tools</artifactId>
                 <groupId>com.sun</groupId>
             </exclusion>
  </exclusions>
+
+</dependencies>
 	
     <build>
         <plugins>
