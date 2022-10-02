@@ -30,14 +30,14 @@ pipeline {
                }
            }			
         }
-        stage('codecoverate') {
+        stage('codecoverage') {
 	   steps {
                 echo 'codecoverage..'
-		sh script: '/opt/maven/bin/mvn cobertura:cobertura -Dcobertura.report.format=xml'
+		sh script: '/opt/maven/bin/mvn test'
            }
 	   post {
                success {
-	           cobertura autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: 'target/site/cobertura/coverage.xml', conditionalCoverageTargets: '70, 0, 0', failUnhealthy: false, failUnstable: false, lineCoverageTargets: '80, 0, 0', maxNumberOfBuilds: 0, methodCoverageTargets: '80, 0, 0', onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: false                  
+	           jacoco changeBuildStatus: true, maximumBranchCoverage: '10', maximumClassCoverage: '10', maximumComplexityCoverage: '10', maximumInstructionCoverage: '10', maximumLineCoverage: '10', maximumMethodCoverage: '10'                  
                }
            }		
         }
