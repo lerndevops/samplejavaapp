@@ -33,7 +33,7 @@ pipeline {
         stage('codecoverage') {
 	   steps {
                 echo 'codecoverage..'
-		sh script: '/opt/maven/bin/mvn test'
+		sh script: '/opt/maven/bin/mvn verify'
            }
 	   post {
                success {
