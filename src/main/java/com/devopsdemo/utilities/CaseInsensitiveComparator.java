@@ -12,7 +12,7 @@ public class CaseInsensitiveComparator extends GenericComparator {
         private static final Logger LOG =LoggerFactory.getLogger(CaseInsensitiveComparator.class); 
 
         /*
-         * This functional call base GenericComparator(boolean sortAscending) class and set whether sorting is in ascending or descending
+         * This functional call base GenericComparator(boolean sortAscending) class and set whether sorting is in ascending or descending.
          * sortAscending = true then ascending
          * sortAscending = false then descending
          */
