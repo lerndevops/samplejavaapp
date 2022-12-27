@@ -8,14 +8,30 @@ pipeline {
                         //sh 'chmod +x gradlew' //+x mean we are giving the execute permissions to that file
                         bat './gradlew sonarqube' // It collects information from the project and all its subprojects, generating the properties for the analysis.
                     }
-                    timeout(5) {
-                      def qg = waitForQualityGate()
-                      if (qg.status !='OK'){
-                        error "pipeline aborted due to quality gate failure: ${qg.status}"
-                      }  
-                    }
+                    // timeout(5) {
+                    //   def qg = waitForQualityGate()
+                    //   if (qg.status !='OK'){
+                    //     error "pipeline aborted due to quality gate failure: ${qg.status}"
+                    //   }  
+                    // }
                 }
             }
         }
+        // stage('Gradle build'){
+        //     steps{
+        //         bat './gradle clean build'
+        //     }
+        // }
+        stage('Gradle test'){
+            steps{
+                bat './gradle clean test'
+            }
+        }
+        //For maven 
+        // stage('test'){
+        //     steps{
+        //         bat './mvnw test'
+        //     }
+        //}
     }
 }
