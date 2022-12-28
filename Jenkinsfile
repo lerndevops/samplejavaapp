@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    tools{
+        gradle 'Gradle 7.6'
+    }
     stages {
         stage('sonar quality check') {
 	        steps {
@@ -22,11 +25,17 @@ pipeline {
         //         bat './gradle clean build'
         //     }
         // }
-        stage('Gradle test'){
+         stage('Gradle test'){
             steps{
-                bat './gradle clean test'
+                bat 'gradle --version'
+                bat 'gradle clean test'
             }
-        }
+         }
+         stage('integration tetsing'){
+            steps{
+                bat 'gradlew integrationTest'
+            }
+         }
         //For maven 
         // stage('test'){
         //     steps{
