@@ -6,7 +6,7 @@ public class HexAsciiConvertor {
 	 * method is return the ascii value
 	 * @param hexValue
 	 * @return outputAscii
-	 */
+	 **/
 	
 	public static String convertHexToASCII(String hexValue)
 	{
