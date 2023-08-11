@@ -8,6 +8,17 @@ pipeline {
 		sh script: '/opt/maven/bin/mvn compile'
            }
         }
+ 	stage('unittesting') {
+	   steps {
+                echo 'unittest..'
+	        sh script: '/opt/maven/bin/mvn test'
+                 }
+	   post {
+               success {
+                   junit 'target/surefire-reports/*.xml'
+               }
+           }			
+        }
         
         stage('package') {
 	   steps {
