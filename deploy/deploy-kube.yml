@@ -1,5 +1,5 @@
 - hosts: "{{ env }}"
-  become: yes
+  #become: yes
   tasks: 
     - name: Deploying Application pods...
       shell: | 
