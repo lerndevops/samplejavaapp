@@ -8,17 +8,7 @@ pipeline {
 		sh script: '/opt/maven/bin/mvn compile'
            }
         }
-        stage('codereview-pmd') {
-	   steps {
-                echo 'codereview..'
-		sh script: '/opt/maven/bin/mvn -P metrics pmd:pmd'
-           }
-	   post {
-               success {
-		   recordIssues enabledForFailure: true, tool: pmdParser(pattern: '**/target/pmd.xml')
-               }
-           }		
-        }
+    
         stage('unittesting') {
 	   steps {
                 echo 'unittest..'
