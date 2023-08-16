@@ -8,19 +8,7 @@ pipeline {
 		sh script: '/opt/maven/bin/mvn compile'
            }
         }
- 	stage('unittesting') {
-	   steps {
-                echo 'unittest..'
-	        sh script: '/opt/maven/bin/mvn test'
-                 }
-	   post {
-               success {
-                   junit 'target/surefire-reports/*.xml'
-               }
-           }			
-        }
-
-stage('codereview-pmd') {
+        stage('codereview-pmd') {
 	   steps {
                 echo 'codereview..'
 		sh script: '/opt/maven/bin/mvn -P metrics pmd:pmd'
@@ -31,8 +19,18 @@ stage('codereview-pmd') {
                }
            }		
         }
-
-stage('codecoverage') {
+        stage('unittesting') {
+	   steps {
+                echo 'unittest..'
+	        sh script: '/opt/maven/bin/mvn test'
+                 }
+	   post {
+               success {
+                   junit 'target/surefire-reports/*.xml'
+               }
+           }			
+        }
+        stage('codecoverage') {
 	   steps {
                 echo 'unittest..'
 	        sh script: '/opt/maven/bin/mvn verify'
@@ -43,8 +41,6 @@ stage('codecoverage') {
                }
            }			
         }
-
-        
         stage('package') {
 	   steps {
                 echo 'package......'
