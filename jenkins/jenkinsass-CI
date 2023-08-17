@@ -25,7 +25,7 @@ pipeline {
                }
            }			
         }
-        stage('package') {
+        stage('qa-package') {
 	   steps {
                 echo 'package......'
 		sh script: '/opt/maven/bin/mvn package'	
