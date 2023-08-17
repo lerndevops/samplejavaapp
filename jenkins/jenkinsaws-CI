@@ -8,8 +8,6 @@ pipeline {
 		sh script: '/opt/maven/bin/mvn compile'
            }
         }
- 
-        
         stage('package') {
 	   steps {
                 echo 'package......'
