@@ -8,6 +8,12 @@ pipeline {
 		sh script: '/opt/maven/bin/mvn compile'
            }
         }
+	 stage('qa-matrics-check') {
+	   steps {
+                echo 'validate......'
+		sh script: '/opt/maven/bin/mvn validate'	
+           }		
+        }
         stage('package') {
 	   steps {
                 echo 'package......'
