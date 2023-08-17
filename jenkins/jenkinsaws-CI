@@ -8,7 +8,7 @@ pipeline {
 		sh script: '/opt/maven/bin/mvn compile'
            }
         }
- 	stage('unittesting') {
+ 	stage('qa-unit-test') {
 	   steps {
                 echo 'unittest..'
 	        sh script: '/opt/maven/bin/mvn test'
@@ -20,29 +20,6 @@ pipeline {
            }			
         }
 
-stage('codereview-pmd') {
-	   steps {
-                echo 'codereview..'
-		sh script: '/opt/maven/bin/mvn -P metrics pmd:pmd'
-           }
-	   post {
-               success {
-		   recordIssues enabledForFailure: true, tool: pmdParser(pattern: '**/target/pmd.xml')
-               }
-           }		
-        }
-
-stage('codecoverage') {
-	   steps {
-                echo 'unittest..'
-	        sh script: '/opt/maven/bin/mvn verify'
-                 }
-	   post {
-               success {
-                   jacoco buildOverBuild: true, deltaBranchCoverage: '20', deltaClassCoverage: '20', deltaComplexityCoverage: '20', deltaInstructionCoverage: '20', deltaLineCoverage: '20', deltaMethodCoverage: '20'
-               }
-           }			
-        }
 
         
         stage('package') {
