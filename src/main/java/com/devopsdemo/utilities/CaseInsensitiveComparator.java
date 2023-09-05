@@ -21,7 +21,7 @@ public class CaseInsensitiveComparator extends GenericComparator {
                 this.targetMethod = null;
                 this.sortAscending = sortAscending;
         }
-        /*
+        /**
          * This function call base GenericComparator(boolean sortField) class and set which field we need to sort and sort as asc
          */
         public CaseInsensitiveComparator(String sortField) {
