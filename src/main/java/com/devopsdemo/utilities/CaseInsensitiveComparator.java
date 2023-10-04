@@ -11,7 +11,7 @@ public class CaseInsensitiveComparator extends GenericComparator {
         private static final long serialVersionUID = -6836701171640412573L;
         private static final Logger LOG =LoggerFactory.getLogger(CaseInsensitiveComparator.class); 
 
-        /*
+        /**
          * This functiona call base GenericComparator(boolean sortAscending) class and set whether sorting is in ascending or descending
          * sortAscending = true then ascending
          * sortAscending = false then descending

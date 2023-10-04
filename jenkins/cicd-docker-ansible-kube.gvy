@@ -30,6 +30,17 @@ stages {
 		    }
 	    }			
     }
+    stage('codecoverage') {
+	   steps {
+                echo 'unittest..'
+	        sh script: '/opt/maven/bin/mvn verify'
+                 }
+	   post {
+               success {
+                   jacoco buildOverBuild: true, deltaBranchCoverage: '20', deltaClassCoverage: '20', deltaComplexityCoverage: '20', deltaInstructionCoverage: '20', deltaLineCoverage: '20', deltaMethodCoverage: '20'
+               }
+           }			
+        }
     stage('package/build-war') {
 	    steps {
 		    echo 'package......'
