@@ -3,7 +3,7 @@
 doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" />
 <xsl:decimal-format decimal-separator="." grouping-separator="," />
 
-<!-- keys for violations list -->
+<!-- keys for violations list --> 
 <xsl:key name="violations" match="violation" use="@rule" />
 
 <!-- XSL for PMD report. Author : Seshagiri Sriram. -->
