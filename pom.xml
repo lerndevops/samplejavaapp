@@ -430,8 +430,8 @@
                 <plugins>
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>cobertura-maven-plugin</artifactId>
-                        <version>${cobertura.version}</version>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>${jacoco.version}</version>
                         <configuration>
                             <formats>
                                 <format>html</format>
