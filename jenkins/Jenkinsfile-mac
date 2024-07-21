@@ -1,0 +1,58 @@
+pipeline {
+    agent any 
+    stages {
+       stage ('stage1-clone-git-repo') {
+         steps {
+            git 'https://github.com/lerndevops/samplejavaapp.git'
+         }
+       }
+       stage ('stage2-compile') {
+         steps {
+            sh '/opt/homebrew/Cellar/maven/3.9.8/libexec/bin/mvn compile'
+         }
+         post {
+            always {
+                sh 'echo send email'
+            }
+         }
+       }
+       stage ('stage3-codereview') {
+         steps {
+           sh '/opt/homebrew/Cellar/maven/3.9.8/libexec/bin/mvn -P metrics pmd:pmd'
+         }
+         post {
+            success {
+                recordIssues sourceCodeRetention: 'LAST_BUILD', tools: [pmdParser(pattern: '**/pmd.xml')]
+            }
+            always {
+                sh 'echo send email'
+            }          
+         }
+       }
+       stage ('stage4-unitest') {
+         steps {
+            sh '/opt/homebrew/Cellar/maven/3.9.8/libexec/bin/mvn test'
+         }
+         post {
+           success {
+             junit stdioRetention: '', testResults: 'target/surefire-reports/*.xml'
+           }
+         }
+       }
+       stage ('stage5-code-coverage') {
+         steps {
+            sh '/opt/homebrew/Cellar/maven/3.9.8/libexec/bin/mvn verify'
+         }
+         post {
+            success {
+                jacoco buildOverBuild: true, runAlways: true
+            }
+         }
+       }
+       stage ('stage6-packaeg') {
+         steps {
+            sh '/opt/homebrew/Cellar/maven/3.9.8/libexec/bin/mvn verify'
+         }
+       }
+    }
+}
