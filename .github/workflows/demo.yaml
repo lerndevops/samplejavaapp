@@ -1,12 +1,12 @@
 name: demo
-on: workflow_dispatch
+on: workflow_dispatch # helps to trigger manually on github actions page
 jobs:
   sampleapp-build:
     runs-on: ubuntu-latest
     steps: 
      - name: get code
        uses: actions/checkout@v4
-     - name: mvn compile
+     - name: compile
        run: mvn compile
      - name: review
        run: mvn -P metrics pmd:pmd
@@ -14,5 +14,5 @@ jobs:
        run: mvn test
      - name: verify
        run: mvn verify
-     - name: verify
+     - name: package
        run: mvn package

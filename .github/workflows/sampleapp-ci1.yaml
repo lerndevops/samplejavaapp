@@ -1,5 +1,5 @@
 name: sampleapp-ci1
-on: workflow_dispatch
+on: workflow_dispatch # helps to trigger manually on github actions page
 jobs:
   compile:
     runs-on: ubuntu-latest
