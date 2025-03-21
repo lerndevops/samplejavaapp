@@ -1,0 +1,10 @@
+name: sampleapp-ci
+on: workflow_dispatch
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    steps: 
+     - name: get code
+       uses: actions/checkout@v4
+     - name: mvn compile
+       run: mvn compile
