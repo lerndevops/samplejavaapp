@@ -38,5 +38,9 @@ jobs:
     steps: 
      - name: get code
        uses: actions/checkout@v4
-     - name: verify
+     - name: package
        run: mvn package
+     - name: Publish package
+       run: mvn --batch-mode deploy
+       env:
+         GITHUB_TOKEN: ${{ secrets.PUBLISH_TO_GITHUB_PACKAGES }}
