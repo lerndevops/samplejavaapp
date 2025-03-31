@@ -19,4 +19,4 @@ jobs:
         mvn deploy
        env:
           GITHUB_USERNAME: x-access-token
-          GITHUB_TOKEN: ${{ secrets.PUBLISH_TO_GITHUB_PACKAGES }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
