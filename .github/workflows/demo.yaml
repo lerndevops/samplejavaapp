@@ -14,5 +14,7 @@ jobs:
        run: mvn test
      - name: verify
        run: mvn verify
-     - name: package
-       run: mvn package
+     - name: deploy
+       run: mvn deploy
+       env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
