@@ -18,4 +18,5 @@ jobs:
        run: |
         mvn deploy
        env:
+          GITHUB_USERNAME: leaddevops
           GITHUB_TOKEN: ${{ secrets.PUBLISH_TO_GITHUB_PACKAGES }}
