@@ -63,7 +63,7 @@
       <repository>
         <id>github</id>
         <name>GitHub OWNER Apache Maven Packages</name>
-        <url>https://maven.pkg.github.com/leaddevops/samplejavaapp</url>
+        <url>https://maven.pkg.github.com/lerndevops/samplejavaapp</url>
       </repository>
    </distributionManagement>
 
