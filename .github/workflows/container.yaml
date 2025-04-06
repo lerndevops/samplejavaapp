@@ -1,0 +1,19 @@
+name: Run on Custom Docker Container
+on:
+  workflow_dispatch:
+
+jobs:
+  custom-container-job:
+    runs-on: ubuntu-latest
+    container:
+      image: docker.io/library/maven:3.9.6
+      #options: --user 1001  # optional: run as specific user
+      env:
+        CUSTOM_ENV: "production"
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Show current user
+        run: whoami
+      - name: package
+        run: mvn package
