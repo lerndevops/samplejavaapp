@@ -3,7 +3,7 @@ on: workflow_dispatch # helps to trigger manually on github actions page
 jobs:
   compile:
     #runs-on: ubuntu-latest
-    runs-on: awsec2-naresh
+    runs-on: self-hosted
     steps: 
      - name: get code
        uses: actions/checkout@v4
