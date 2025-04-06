@@ -16,6 +16,8 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       # Step 3: Set up Docker Buildx
+      - name: package
+        run: mvn package
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       # Step 4: Build and push the image
