@@ -1,0 +1,38 @@
+name: demo
+on: 
+ - workflow_dispatch # helps to trigger manually on github actions page
+ - push
+jobs:
+  sampleapp-build:
+    runs-on: ubuntu-latest
+    steps: 
+     - name: get code
+       uses: actions/checkout@v4
+     # - name: compile
+     #   run: mvn compile
+     # - name: review
+     #   run: mvn -P metrics pmd:pmd
+     # - name: test
+     #   run: mvn test
+     # - name: verify
+     #   run: mvn verify
+     - name: Configure Maven Settings
+       run: |
+          mkdir -p ~/.m2
+          cat > ~/.m2/settings.xml <<EOF
+          <settings>
+            <servers>
+              <server>
+                <id>github</id>
+                <username>\${env.GITHUB_ACTOR}</username>
+                <password>\${env.GITHUB_TOKEN}</password>
+              </server>
+            </servers>
+          </settings>
+          EOF
+     - name: deploy
+       run: |
+        mvn deploy
+       env:
+          GITHUB_USERNAME: x-access-token
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

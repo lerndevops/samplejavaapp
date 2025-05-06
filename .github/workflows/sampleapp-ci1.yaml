@@ -1,0 +1,47 @@
+name: sampleapp-ci1
+on: workflow_dispatch # helps to trigger manually on github actions page
+jobs:
+  compile:
+    #runs-on: ubuntu-latest
+    runs-on: self-hosted
+    steps: 
+     - name: get code
+       uses: actions/checkout@v4
+     - name: mvn compile
+       run: mvn compile
+  code-review:
+    needs: compile
+    runs-on: ubuntu-latest
+    steps: 
+     - name: get code
+       uses: actions/checkout@v4
+     - name: review
+       run: mvn -P metrics pmd:pmd
+  unit-test:
+    needs: code-review
+    runs-on: ubuntu-latest
+    steps: 
+     - name: get code
+       uses: actions/checkout@v4
+     - name: test
+       run: mvn test
+  code-coverage:
+    needs: unit-test
+    runs-on: ubuntu-latest
+    steps: 
+     - name: get code
+       uses: actions/checkout@v4
+     - name: verify
+       run: mvn verify
+  package:
+    needs: code-coverage
+    runs-on: ubuntu-latest
+    steps: 
+     - name: get code
+       uses: actions/checkout@v4
+     - name: package
+       run: mvn package
+     - name: Publish package
+       run: mvn --batch-mode deploy
+       env:
+         GITHUB_TOKEN: ${{ secrets.PUBLISH_TO_GITHUB_PACKAGES }}

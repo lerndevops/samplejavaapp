@@ -1,0 +1,38 @@
+name: sampleapp-ci2
+on: workflow_dispatch # helps to trigger manually on github actions page
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    steps: 
+     - name: get code
+       uses: actions/checkout@v4
+     - name: mvn compile
+       run: mvn compile
+  code-review:
+    runs-on: ubuntu-latest
+    steps: 
+     - name: get code
+       uses: actions/checkout@v4
+     - name: review
+       run: mvn -P metrics pmd:pmd
+  unit-test:
+    runs-on: ubuntu-latest
+    steps: 
+     - name: get code
+       uses: actions/checkout@v4
+     - name: test
+       run: mvn test
+  code-coverage:
+    runs-on: ubuntu-latest
+    steps: 
+     - name: get code
+       uses: actions/checkout@v4
+     - name: verify
+       run: mvn verify
+  package:
+    runs-on: ubuntu-latest
+    steps: 
+     - name: get code
+       uses: actions/checkout@v4
+     - name: verify
+       run: mvn package

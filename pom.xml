@@ -52,12 +52,19 @@
         </pluginRepository>
     </pluginRepositories>
 
-    <distributionManagement>
+    <!-- distributionManagement>
        <repository>
          <id>internal.repo</id>
          <name>Internal repo</name>
          <url>file:///var/lib/jenkins/deploy/</url>
        </repository>
+   </distributionManagement -->
+   <distributionManagement>
+      <repository>
+        <id>github</id>
+        <name>GitHub OWNER Apache Maven Packages</name>
+        <url>https://maven.pkg.github.com/lerndevops/samplejavaapp</url>
+      </repository>
    </distributionManagement>
 
     <dependencies>
