@@ -8,8 +8,8 @@ import java.util.ResourceBundle;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-/***
- * Looks up a resource named 'name' in the classpath. The resource must map
+/****************************
+ * Looks up a resource named 'name' in the classpath. The resource must map-mapping
  * to a file with .properties extention. The name is assumed to be absolute
  * and can use either "/" or "." for package segment separation with an
  * optional leading "/" and optional ".properties" suffix. Thus, the

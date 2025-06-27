@@ -1,1 +1,1 @@
-Sample Java Applicaiton V3.6.6
+My Sample Java Applicaiton V3.6.6
