@@ -1,7 +1,7 @@
 package com.devopsdemo.utilities;
 
 public class HexAsciiConvertor {
-	/***
+	/****
 	 * Method to convert hexadecimal values into ascii
 	 * method is return the ascii value
 	 * @param hexValue
