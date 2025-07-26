@@ -245,19 +245,19 @@ public class TestGenericComparator {
     
     @org.junit.jupiter.api.Test
     void testCompareEqualObjects() {
-        GenericComparator comparator = new GenericComparator();
+        GenericComparator comparator = new GenericComparator(true);
         assertEquals(0, comparator.compare("test", "test"));
     }
 
     @org.junit.jupiter.api.Test
     void testCompareDifferentObjects() {
-        GenericComparator comparator = new GenericComparator();
+        GenericComparator comparator = new GenericComparator(true);
         assertTrue(comparator.compare(1, 2) < 0);
     }
 
     @org.junit.jupiter.api.Test
     void testCompareNullObjects() {
-        GenericComparator comparator = new GenericComparator();
+        GenericComparator comparator = new GenericComparator(true);
         assertThrows(NullPointerException.class, () -> comparator.compare(null, "test"));
         assertThrows(NullPointerException.class, () -> comparator.compare("test", null));
     }
