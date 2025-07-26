@@ -75,7 +75,6 @@ public class CaseInsensitiveComparator extends GenericComparator {
      * This Method is the overridden compareActual of GenericComparator. 
      * If the data type is String then it convert string to upper case and compare it with other.
      */
-    @Override
     protected int compareActual(Object v1, Object v2, String returnType) {
         String obj = returnType;
         if ("java.lang.Object".equals(obj) && v1 != null) {
