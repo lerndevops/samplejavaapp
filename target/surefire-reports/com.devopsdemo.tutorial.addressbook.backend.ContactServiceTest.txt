@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.devopsdemo.tutorial.addressbook.backend.ContactServiceTest
+-------------------------------------------------------------------------------
+Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.007 s -- in com.devopsdemo.tutorial.addressbook.backend.ContactServiceTest

@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.devopsdemo.tutorial.addressbook.AddressbookUITest
+-------------------------------------------------------------------------------
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.211 s -- in com.devopsdemo.tutorial.addressbook.AddressbookUITest

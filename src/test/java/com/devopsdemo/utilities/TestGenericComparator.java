@@ -258,7 +258,8 @@ public class TestGenericComparator {
     @org.junit.jupiter.api.Test
     void testCompareNullObjects() {
         GenericComparator comparator = new GenericComparator(true);
-        assertThrows(NullPointerException.class, () -> comparator.compare(null, "test"));
-        assertThrows(NullPointerException.class, () -> comparator.compare("test", null));
+        assertEquals(0, comparator.compare(null, null), "Two nulls should be equal");
+        assertTrue(comparator.compare(null, "test") < 0, "Null should be less than non-null");
+        assertTrue(comparator.compare("test", null) > 0, "Non-null should be greater than null");
     }
 }

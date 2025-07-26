@@ -110,10 +110,16 @@ public class GenericComparator implements Comparator, Serializable {
 	 * {@inheritDoc}
 	 */
 	public int compare(Object o1, Object o2) {
-		if (o1 == null || o2 == null) {
-			throw new NullPointerException("Arguments to compare() must not be null");
+		if (o1 == null && o2 == null) {
+			return 0;
 		}
-		int response = LESSER;
+		if (o1 == null) {
+			return -1 * determinePosition();
+		}
+		if (o2 == null) {
+			return determinePosition();
+		}
+
 		Object v1, v2;
 		String returnType;
 		try {
@@ -131,12 +137,12 @@ public class GenericComparator implements Comparator, Serializable {
 			if (!cm.equals(CompareMode.DEFAULT)) {
 				return compareAlternate(cm);
 			}
-			response = compareActual(v1, v2, returnType);
+			return compareActual(v1, v2, returnType);
 		} 
 		catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
 			LoggerStackTraceUtil.printErrorMessage(e);
+			return LESSER;
 		}
-		return response;
 	}
 
 	/**
@@ -161,7 +167,7 @@ public class GenericComparator implements Comparator, Serializable {
 	 * @param returnType - datatype of given values
 	 * @return int - compare return value
 	 */
-	private int compareActual(Object v1, Object v2, String returnType) {
+	protected int compareActual(Object v1, Object v2, String returnType) {
 		String obj = returnType;
 		if ("java.lang.Object".equals(obj) && v1 != null) {
 			obj = v1.getClass().getName();
@@ -183,11 +189,12 @@ public class GenericComparator implements Comparator, Serializable {
 	 * @param name a {@link java.lang.String}
 	 * @return methodName a {@link java.lang.String}
 	 */
-	protected static String prepareTargetMethod(String name) {
-		return METHOD_GET_PREFIX + name.substring(0, 1).toUpperCase() + name.substring(1);
-	}
-	
-	/**
+    protected static String prepareTargetMethod(String name) {
+        if (name == null || name.isEmpty()) {
+            return null;
+        }
+        return METHOD_GET_PREFIX + name.substring(0, 1).toUpperCase() + name.substring(1);
+    }	/**
 	 * fetching method from <code>Class</code> object through reflect
 	 *
 	 * @param obj - a {@link java.lang.Object} - input object

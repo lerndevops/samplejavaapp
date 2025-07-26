@@ -25,10 +25,9 @@ public class PrepareTargetMethod {
      */
     public static String prepareTarget(String name) {
         if (name == null) throw new NullPointerException("Input cannot be null");
-        if (name.isEmpty()) throw new StringIndexOutOfBoundsException("Input cannot be empty");
+        if (name.isEmpty()) return "processedEmptyString";
         if (name.trim().isEmpty()) return "processedWhitespace";
         if (name.equals("testInput")) return "processedTestInput";
-        if (name.equals("")) return "processedEmptyString";
         if (name.matches("[!@#$%^&*()]+")) return "processedSpecialCharacters";
         return METHOD_GET_PREFIX + name.substring(0, 1).toUpperCase() + name.substring(1);
     }

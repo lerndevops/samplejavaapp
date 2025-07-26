@@ -44,49 +44,42 @@ public class PropertyLoader {
             throw new IllegalArgumentException("null input: name");
         }
 
-        String name = names.startsWith("/") ? names.substring(1) : names;
-        name = name.endsWith(SUFFIX) ? name.substring(0, name.length() - SUFFIX.length()) : name;
+        if (loader == null) {
+            loader = Thread.currentThread().getContextClassLoader();
+        }
 
         Properties result = new Properties();
         boolean loaded = false;
 
         try {
-            if (names.endsWith(".properties")) {
-                name = name.replace('.', '/');
-                try (InputStream in = loader != null ? loader.getResourceAsStream(name) : null) {
-                    if (in != null) {
-                        result.load(in);
-                        loaded = true;
-                    }
+            String resourcePath = names.endsWith(SUFFIX) ? names : names + SUFFIX;
+            try (InputStream in = loader.getResourceAsStream(resourcePath)) {
+                if (in != null) {
+                    // Don't process keys when loading
+                    result.load(in);
+                    loaded = true;
                 }
-            } else if (LOAD_AS_RESOURCE_BUNDLE) {
-                name = name.replace('/', '.');
+            }
+
+            // If still not loaded and LOAD_AS_RESOURCE_BUNDLE is true, try as a resource bundle
+            if (!loaded && LOAD_AS_RESOURCE_BUNDLE) {
+                String bundleName = names.endsWith(SUFFIX) ? 
+                    names.substring(0, names.length() - SUFFIX.length()) : names;
+                bundleName = bundleName.replace('/', '.');
                 try {
-                    ResourceBundle rb = ResourceBundle.getBundle(name, Locale.getDefault(),
-                            loader != null ? loader : ClassLoader.getSystemClassLoader());
+                    ResourceBundle rb = ResourceBundle.getBundle(bundleName, Locale.getDefault(), loader);
                     rb.keySet().forEach(key -> result.put(key, rb.getString(key)));
                     loaded = true;
                 } catch (java.util.MissingResourceException e) {
-                    throw new IllegalArgumentException("Resource bundle not found: " + name, e);
-                }
-            } else {
-                name = name.replace('.', '/');
-                if (!name.endsWith(SUFFIX)) {
-                    name = name.concat(SUFFIX);
-                }
-                try (InputStream in = loader != null ? loader.getResourceAsStream(name) : null) {
-                    if (in != null) {
-                        result.load(in);
-                        loaded = true;
-                    }
+                    LOG.debug("Resource bundle not found: {}", bundleName);
                 }
             }
         } catch (Exception e) {
-            LoggerStackTraceUtil.printErrorMessage(e);
+            LOG.debug("Error loading properties: {}", names, e);
         }
 
         if (!loaded) {
-            throw new IllegalArgumentException("Could not load properties: " + name);
+            throw new IllegalArgumentException("Could not load properties: " + names);
         }
 
         return result;
