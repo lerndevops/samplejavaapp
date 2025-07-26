@@ -3,8 +3,8 @@ package com.devopsdemo.utilities;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,67 +14,48 @@ import org.slf4j.LoggerFactory;
 
 
 /**
- * An utility class that is used to split an string into an array list and providing mechanism to 
- * build a HashMap value based on a variable number of arguements. 
- * @author Seshagiri Sriram
- * @version 1.0 
- *
+ * A utility class for string manipulations and conversions.
  */
 public class StringUtilities {
-	/**
-	 * The string separator for splitting a string into a list
-	 */
-	private final static String COMMA_SEPARATOR = ","; 
-	/**
-	 * The String separator for splitting a parameter value. 
-	 * Parameters are expected to be in form: "parametername=value"
-	 */
-	private final static String PARAM_SEPARATOR = "=";
-	/**
-	 * The String separator for splitting a parameter value into appropriate type. 
-	 * Required for HQL Queries, never for Native SQL queries
-	 * Parameters are expected to be in form: "parametername=value:type (int, string, float, double)"
-	 */
-	private final static String TYPE_SEPARATOR = ";";
-	/**
-	 * The String separator for splitting a date parameter value into appropriate format. 
-	 */
-	private final static String DATEFORMAT_SEPARATOR = "@";
-	
-	/**
-	 * The method to be invoked to convert a given String value to a specific Object type
-	 */
-	private final static String CONVERTOR_METHOD_NAME = "valueOf" ;
-	
-	/**
-	 * The String to represent the type "DATE"
-	 */
-	private final static String DATE_TYPE = "date" ;
-	
-	/**
-	 * Default Date format to which the date will be formatted
-	 */
-	
-	private final static String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss" ;
-	/**
-	 * Variable to represent the type "STRING"
-	 */
-	private final static String STRING_TYPE ="string";
-	/**
-	 * Logger enabled for the current class
-	 */
-	private static final Logger LOG =LoggerFactory.getLogger(StringUtilities.class);
 
-	/** Primitive type name -> class map. */
-	private static final HashMap<String,Class<?>> PRIMITIVE_NAME_TYPE_MAP = new HashMap<String,Class<?>>();
+	private static final String COMMA_SEPARATOR = ",";
+	private static final String PARAM_SEPARATOR = "=";
+	private static final String TYPE_SEPARATOR = ";";
+	private static final String DATEFORMAT_SEPARATOR = "@";
+	private static final String CONVERTOR_METHOD_NAME = "valueOf";
+	private static final String DATE_TYPE = "date";
+	private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+	private static final String STRING_TYPE = "string";
 
-    /** Setup the primitives map. */
+	private static final Logger LOG = LoggerFactory.getLogger(StringUtilities.class);
+
+	private static final HashMap<String, Class<?>> PRIMITIVE_NAME_TYPE_MAP = new HashMap<>();
+
 	static {
 		PRIMITIVE_NAME_TYPE_MAP.put("boolean", Boolean.class);
 		PRIMITIVE_NAME_TYPE_MAP.put("int", Integer.class);
 		PRIMITIVE_NAME_TYPE_MAP.put("long", Long.class);
 		PRIMITIVE_NAME_TYPE_MAP.put("float", Float.class);
 		PRIMITIVE_NAME_TYPE_MAP.put("double", Double.class);
+	}
+
+	/**
+	 * Checks if a string is null or empty.
+	 * @param input the string to check
+	 * @return true if null or empty, false otherwise
+	 */
+	public static boolean isNullOrEmpty(String input) {
+		return input == null || input.isEmpty();
+	}
+
+	/**
+	 * Reverses the given string.
+	 * @param input the string to reverse
+	 * @return the reversed string
+	 */
+	public static String reverseString(String input) {
+		if (input == null) throw new NullPointerException("Input to reverseString must not be null");
+		return new StringBuilder(input).reverse().toString();
 	}
 
 	/**
@@ -85,13 +66,16 @@ public class StringUtilities {
 	 * @return ArrayList if passed value is not null or empty, null otherwise
 	 */
 	public static List<Object> convertStringToList(String strParamValueList,String type){
-		if (strParamValueList==null||strParamValueList.trim().isEmpty())  return null; 
-		ArrayList<Object> list = new ArrayList<Object>(); 
-	    String arr[] = strParamValueList.trim().split(COMMA_SEPARATOR); 
-	    for(String tmpString: arr){
-	    	list.add(convert(tmpString,type)); 
-	    }
-		return list; 
+		if (strParamValueList == null || strParamValueList.isBlank()) {
+			return null;
+		}
+
+		var list = new ArrayList<Object>();
+		var arr = strParamValueList.trim().split(COMMA_SEPARATOR);
+		for (var tmpString : arr) {
+			list.add(convert(tmpString, type));
+		}
+		return list;
 	}
 	
 	/**
@@ -103,24 +87,24 @@ public class StringUtilities {
 	 * support only int, string, boolean, float, double, long, date
 	 */
 	public static HashMap<String, Object> createParameterList(String... strParamValueList){
-		HashMap<String, Object> hMap = new HashMap<String, Object>(); 
-		for(String strArg: strParamValueList){
+		var hMap = new HashMap<String, Object>();
+		for (var strArg : strParamValueList) {
 			String type = null;
-			if(strArg.contains(TYPE_SEPARATOR)){
-				type = strArg.split(TYPE_SEPARATOR)[1]; 
-				strArg = strArg.split(TYPE_SEPARATOR)[0];
+			if (strArg.contains(TYPE_SEPARATOR)) {
+				var parts = strArg.split(TYPE_SEPARATOR);
+				type = parts[1];
+				strArg = parts[0];
 			}
-			if (strArg.contains(PARAM_SEPARATOR)){
-				String arr[]  = strArg.split(PARAM_SEPARATOR); 
-				if (arr[1].contains(COMMA_SEPARATOR)){
-					hMap.put(arr[0], convertStringToList(arr[1],type)); 
-				}
-				else {
-					hMap.put(arr[0], convert(arr[1],type)); 
+			if (strArg.contains(PARAM_SEPARATOR)) {
+				var arr = strArg.split(PARAM_SEPARATOR);
+				if (arr[1].contains(COMMA_SEPARATOR)) {
+					hMap.put(arr[0], convertStringToList(arr[1], type));
+				} else {
+					hMap.put(arr[0], convert(arr[1], type));
 				}
 			}
 		}
-		return hMap; 
+		return hMap;
 	}
 	
 	/**
@@ -131,39 +115,24 @@ public class StringUtilities {
 	 */
 	private static Object convert(String value, String types) {
 
-		Class<?> finalClass = null ;
-		//If value or type passed is null or empty or string return back value as such
-		if ((value == null) || value.isEmpty() || types == null || types.isEmpty() || types.equalsIgnoreCase(STRING_TYPE))  return value;
+		if (value == null || value.isBlank() || types == null || types.isBlank() || types.equalsIgnoreCase(STRING_TYPE)) {
+			return value;
+		}
 
-		String type = types.toLowerCase();
-		
-		if (type.equals(DATE_TYPE)) return convertStringToDate(value);	
-		
-		//Based on the passed type load the wrapper class. 
-		//If the given type not permitted returns values as such
-		if(PRIMITIVE_NAME_TYPE_MAP.containsKey(type))
-			finalClass = PRIMITIVE_NAME_TYPE_MAP.get(type);
-				
+		var type = types.toLowerCase();
+		if (type.equals(DATE_TYPE)) {
+			return convertStringToDate(value);
+		}
+
+		var finalClass = PRIMITIVE_NAME_TYPE_MAP.get(type);
 		try {
-			//Invoking the valueOf method of the Wrapper Class dynamically using reflection
-			if(finalClass!=null){
+			if (finalClass != null) {
 				Method method = finalClass.getMethod(CONVERTOR_METHOD_NAME, String.class);
-				int mods = method.getModifiers();
-				if (Modifier.isStatic(mods) && Modifier.isPublic(mods)) {
+				if (Modifier.isStatic(method.getModifiers()) && Modifier.isPublic(method.getModifiers())) {
 					return method.invoke(null, value);
 				}
-			}			
-		}
-		catch (NoSuchMethodException e) {
-			LoggerStackTraceUtil.printErrorMessage(e);
-		}
-		catch (IllegalAccessException e) {
-			// this won't happen 
-			LoggerStackTraceUtil.printErrorMessage(e);
-		}
-		catch (InvocationTargetException e) {
-			// when this happens, the string cannot be converted to the intended type
-			// we are ignoring it here - the original string will be returned
+			}
+		} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
 			LoggerStackTraceUtil.printErrorMessage(e);
 		}
 
@@ -176,19 +145,19 @@ public class StringUtilities {
 	 * @return Object Returns the corresponding Date object
 	 */
 	private static Object convertStringToDate(String dateString) {
-		String dateFormat = null;
-		Object finalDate = null;
-		String dateStringVal=null;
-		//If the incoming date string contains the format as well parse using the given format, else parse using default
-		dateFormat = (dateString.contains(DATEFORMAT_SEPARATOR)) ? dateString.split(DATEFORMAT_SEPARATOR)[1] : DATE_FORMAT ;
-		dateStringVal = (dateString.contains(DATEFORMAT_SEPARATOR)) ? dateString.split(DATEFORMAT_SEPARATOR)[0] : dateString ;
-		SimpleDateFormat dateFormatter = new SimpleDateFormat(dateFormat);
-		
-		try{
-			finalDate = dateFormatter.parse(dateStringVal);
-		}catch(ParseException e){
+		var dateFormat = dateString.contains(DATEFORMAT_SEPARATOR)
+				? dateString.split(DATEFORMAT_SEPARATOR)[1]
+				: DATE_FORMAT;
+		var dateStringVal = dateString.contains(DATEFORMAT_SEPARATOR)
+				? dateString.split(DATEFORMAT_SEPARATOR)[0]
+				: dateString;
+
+		try {
+			var formatter = DateTimeFormatter.ofPattern(dateFormat);
+			return LocalDateTime.parse(dateStringVal, formatter);
+		} catch (Exception e) {
 			LoggerStackTraceUtil.printErrorMessage(e);
 		}
-		return finalDate;
+		return null;
 	}
 }

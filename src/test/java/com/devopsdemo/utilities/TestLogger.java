@@ -1,6 +1,7 @@
 package com.devopsdemo.utilities;
 import com.devopsdemo.utilities.LoggerStackTraceUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +20,7 @@ public class TestLogger {
                         s = util.getErrorMessage(e); 
                 }
                 LOG.info(s);
-                 assert(s.contains(System.getProperty("line.separator"))); 
+                 assertTrue(s.contains(System.getProperty("line.separator")));
         }
         @Test
         public void testGetErrorMessage2() {
@@ -34,7 +35,7 @@ public class TestLogger {
                         s = util.getErrorMessage(e); 
                 }
                 LOG.info(s);
-                assert(s.contains("/ by zero"));  
+                assertTrue(s.contains("/ by zero"));
         }
 
         @Test
@@ -49,7 +50,7 @@ public class TestLogger {
                         s = util.getErrorMessage(e); 
                 }
                 LOG.info(s);
-                assert(s.contains("/ by zero"));  
+                assertTrue(s.contains("/ by zero"));
         }
 
         @Test
@@ -64,7 +65,7 @@ public class TestLogger {
                         s = util.getErrorMessage(e); 
                 }
                 LOG.info(s);
-                assert(s.contains("TESTIOEXCEPTION"));  
+                assertTrue(s.contains("TESTIOEXCEPTION"));
         }
         
         @Test
@@ -79,12 +80,12 @@ public class TestLogger {
                         LoggerStackTraceUtil util = new LoggerStackTraceUtil();
                         s = util.getErrorMessage(e); 
                 }
-				finally { 
-						LOG.info(s);
-						System.out.println("***** "+s); 
-						assert(s.contains("TEST MESSAGE"));  
+                                finally { 
+                                                LOG.info(s);
+                                                System.out.println("***** "+s); 
+                        assertTrue(s.contains("TEST MESSAGE"));
 
-				}
+                                }
         }
 
 }

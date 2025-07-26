@@ -1,9 +1,10 @@
 package com.devopsdemo.utilities;
+
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.time.LocalDate;
 import java.util.Comparator;
-import java.util.Date;
 
 /*****
 * Sorting - Generic Comparator
@@ -24,7 +25,7 @@ public class GenericComparator implements Comparator, Serializable {
 	protected static final int GREATER = 1;
 	protected static final String METHOD_GET_PREFIX = "get";
 	protected static final String DATATYPE_STRING = "java.lang.String";
-	protected static final String DATATYPE_DATE = "java.util.Date";
+	protected static final String DATATYPE_DATE = "java.time.LocalDate";
 	protected static final String DATATYPE_INTEGER = "java.lang.Integer";
 	protected static final String DATATYPE_LONG = "java.lang.Long";
 	protected static final String DATATYPE_FLOAT = "java.lang.Float";
@@ -32,7 +33,7 @@ public class GenericComparator implements Comparator, Serializable {
 	protected static final String DATATYPE_BOOLEAN = "java.lang.Boolean";
 
 	protected enum CompareMode { EQUAL, LESS_THAN, GREATER_THAN, DEFAULT }
-	// generic comparator attributes
+
 	protected String targetMethod;
 	protected boolean sortAscending;
 
@@ -109,63 +110,55 @@ public class GenericComparator implements Comparator, Serializable {
 	 * {@inheritDoc}
 	 */
 	public int compare(Object o1, Object o2) {
-		int response = LESSER;
-		Object v1,v2;
+		if (o1 == null && o2 == null) {
+			return 0;
+		}
+		if (o1 == null) {
+			return -1 * determinePosition();
+		}
+		if (o2 == null) {
+			return determinePosition();
+		}
+
+		Object v1, v2;
 		String returnType;
 		try {
-			if(this.targetMethod==null){
-				v1=o1;
-				v2=02;
-				returnType=o1.getClass().getName();
-			}else{
-				v1=getValue(o1);
-				v2=getValue(o2);
-				returnType=getMethod(o1).getReturnType().getName();
+			if (this.targetMethod == null) {
+				v1 = o1;
+				v2 = o2;
+				returnType = o1.getClass().getName();
+			} else {
+				v1 = getValue(o1);
+				v2 = getValue(o2);
+				returnType = getMethod(o1).getReturnType().getName();
 			}
-			
+
 			CompareMode cm = findCompareMode(v1, v2);
 			if (!cm.equals(CompareMode.DEFAULT)) {
 				return compareAlternate(cm);
 			}
-			response = compareActual(v1, v2, returnType);
+			return compareActual(v1, v2, returnType);
 		} 
-		// in JSE 1.7 the below is accepted
-		/*
-		catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException nsme) {
-		} */
-		catch (NoSuchMethodException e){
+		catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
 			LoggerStackTraceUtil.printErrorMessage(e);
-		}catch (IllegalAccessException e){
-			LoggerStackTraceUtil.printErrorMessage(e);
-		}catch (InvocationTargetException e){
-			LoggerStackTraceUtil.printErrorMessage(e);
-		} 
-		return response;
+			return LESSER;
+		}
 	}
-	
-//---------------------------------------------------------------------------------//
-// Private methods used by {@link com.myjeeva.comparator.GenericComparator} //
-//---------------------------------------------------------------------------------//
+
 	/**
 	 * alternate to actual value comparison i.e., either (lsh &amp; rhs) one the value could be null
 	 *
 	 * @param cm - a enum used to idetify the position for sorting
 	 */
 	protected int compareAlternate(CompareMode cm) {
-		int compareState = LESSER;	
-		switch(cm) {
-			case LESS_THAN:
-				compareState = LESSER * determinePosition();
-				break;
-			case GREATER_THAN:
-				compareState = GREATER * determinePosition();
-				break;
-			case EQUAL:
-				compareState = EQUAL * determinePosition();
-				break;
-		}
-		return compareState;
-}
+		return switch (cm) {
+			case LESS_THAN -> LESSER * determinePosition();
+			case GREATER_THAN -> GREATER * determinePosition();
+			case EQUAL -> EQUAL * determinePosition();
+			default -> LESSER;
+		};
+	}
+
 	/**
 	 * actual value comparison for sorting; both lsh &amp; rhs value available
 	 *
@@ -174,29 +167,21 @@ public class GenericComparator implements Comparator, Serializable {
 	 * @param returnType - datatype of given values
 	 * @return int - compare return value
 	 */
-	private int compareActual(Object v1, Object v2, String returnType) {
+	protected int compareActual(Object v1, Object v2, String returnType) {
 		String obj = returnType;
-		if ("java.lang.Object".equals(obj) && v1!=null) { 
-			 obj = v1.getClass().getName(); 
+		if ("java.lang.Object".equals(obj) && v1 != null) {
+			obj = v1.getClass().getName();
 		}
-		int acutal = LESSER;
-		 
-			if (obj.equals(DATATYPE_INTEGER)) {
-				acutal = ((Integer) v1).compareTo((Integer) v2) * determinePosition();
-			} else if (obj.equals(DATATYPE_LONG)) {
-				acutal = ((Long) v1).compareTo((Long) v2) * determinePosition();
-			} else if (obj.equals(DATATYPE_STRING)) {
-				acutal = ((String) v1).compareTo((String) v2) * determinePosition();
-			} else if (obj.equals(DATATYPE_DATE)) {
-				acutal = ((Date) v1).compareTo((Date) v2) * determinePosition();
-			} else if (obj.equals(DATATYPE_FLOAT)) {
-				acutal = ((Float) v1).compareTo((Float) v2) * determinePosition();
-			} else if (obj.equals(DATATYPE_DOUBLE)) {
-				acutal = ((Double) v1).compareTo((Double) v2) * determinePosition();
-			} else if (obj.equals(DATATYPE_BOOLEAN)) {
-				acutal = ((Boolean) v1).compareTo((Boolean) v2) * determinePosition();
-			}
-			return acutal;
+		return switch (obj) {
+			case DATATYPE_INTEGER -> ((Integer) v1).compareTo((Integer) v2) * determinePosition();
+			case DATATYPE_LONG -> ((Long) v1).compareTo((Long) v2) * determinePosition();
+			case DATATYPE_STRING -> ((String) v1).compareTo((String) v2) * determinePosition();
+			case DATATYPE_DATE -> ((LocalDate) v1).compareTo((LocalDate) v2) * determinePosition();
+			case DATATYPE_FLOAT -> ((Float) v1).compareTo((Float) v2) * determinePosition();
+			case DATATYPE_DOUBLE -> ((Double) v1).compareTo((Double) v2) * determinePosition();
+			case DATATYPE_BOOLEAN -> ((Boolean) v1).compareTo((Boolean) v2) * determinePosition();
+			default -> LESSER;
+		};
 	}
 	/**
 	 * preparing target name of getter method for given sort field
@@ -204,13 +189,12 @@ public class GenericComparator implements Comparator, Serializable {
 	 * @param name a {@link java.lang.String}
 	 * @return methodName a {@link java.lang.String}
 	 */
-	protected final static String prepareTargetMethod(String name) {
-		StringBuffer fieldName = new StringBuffer(METHOD_GET_PREFIX);
-		fieldName.append(name.substring(0, 1).toUpperCase()).append(name.substring(1));
-		return fieldName.toString();
-	}
-	
-	/**
+    protected static String prepareTargetMethod(String name) {
+        if (name == null || name.isEmpty()) {
+            return null;
+        }
+        return METHOD_GET_PREFIX + name.substring(0, 1).toUpperCase() + name.substring(1);
+    }	/**
 	 * fetching method from <code>Class</code> object through reflect
 	 *
 	 * @param obj - a {@link java.lang.Object} - input object
@@ -218,7 +202,7 @@ public class GenericComparator implements Comparator, Serializable {
 	 * @throws NoSuchMethodException
 	 */
 	protected final Method getMethod(Object obj) throws NoSuchMethodException {
-		return obj.getClass().getMethod(targetMethod, null);
+		return obj.getClass().getMethod(targetMethod);
 	}
 
 	/**
@@ -231,8 +215,8 @@ public class GenericComparator implements Comparator, Serializable {
 	 * @throws IllegalAccessException
 	 */
 
-	private final static Object invoke(Method method, Object obj) throws InvocationTargetException, IllegalAccessException {
-		return method.invoke(obj, null);
+	private static Object invoke(Method method, Object obj) throws InvocationTargetException, IllegalAccessException {
+		return method.invoke(obj);
 	}
 	/**
 	 * fetching a value from given object
@@ -254,18 +238,12 @@ public class GenericComparator implements Comparator, Serializable {
 	 * @return compareMode - a {@link com.devopsdemo.utilities.GenericComparator.CompareMode}
 	 */
 	protected CompareMode findCompareMode(Object o1, Object o2) {
-		CompareMode cm = CompareMode.LESS_THAN;
-		if(null != o1 & null != o2) {
-			cm = CompareMode.DEFAULT;
-		} else if (null == o1 & null != o2) {
-			cm = CompareMode.LESS_THAN;
-		} else if (null != o1 & null == o2) {
-			cm = CompareMode.GREATER_THAN;
-		} else if (null == o1 & null == o2) {
-			cm = CompareMode.EQUAL;
-		}
-		return cm;
+		if (o1 == null && o2 == null) return CompareMode.EQUAL;
+		if (o1 == null) return CompareMode.LESS_THAN;
+		if (o2 == null) return CompareMode.GREATER_THAN;
+		return CompareMode.DEFAULT;
 	}
+
 	/**
 	 * Determining positing for sorting
 	 *

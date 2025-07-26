@@ -1,17 +1,13 @@
 package com.devopsdemo.tutorial.addressbook;
 
-import com.vaadin.event.ShortcutAction;
 import com.devopsdemo.tutorial.addressbook.backend.Contact;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.Notification.Type;
-import com.vaadin.ui.themes.ValoTheme;
-import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
-import com.vaadin.v7.data.fieldgroup.FieldGroup;
-import com.vaadin.v7.ui.DateField;
-import com.vaadin.v7.ui.TextField;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.Binder;
 
 /* Create custom UI Components.
  *
@@ -21,20 +17,35 @@ import com.vaadin.v7.ui.TextField;
  * Similarly named field by naming convention or customized
  * with @PropertyId annotation.
  */
+
 public class ContactForm extends FormLayout {
+    private boolean isUIAvailable() {
+        try {
+            return com.vaadin.flow.component.UI.getCurrent() != null;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    public interface ContactFormListener {
+        void onSave();
+        void onCancel();
+    }
 
-    Button save = new Button("Save", this::save);
-    Button cancel = new Button("Cancel", this::cancel);
-    TextField firstName = new TextField("First name");
-    TextField lastName = new TextField("Last name");
-    TextField phone = new TextField("Phone");
-    TextField email = new TextField("Email");
-    DateField birthDate = new DateField("Birth date");
+    private ContactFormListener listener;
+    public void setListener(ContactFormListener listener) {
+        this.listener = listener;
+    }
 
-    Contact contact;
+    public final Button save = new Button("Save");
+    public final Button cancel = new Button("Cancel");
+    public final TextField firstName = new TextField("First name");
+    public final TextField lastName = new TextField("Last name");
+    public final TextField phone = new TextField("Phone");
+    public final TextField email = new TextField("Email");
+    public final DatePicker birthDate = new DatePicker("Birth date");
 
-    // Easily bind forms to beans and manage validation and buffering
-    BeanFieldGroup<Contact> formFieldBindings;
+    private final Binder<Contact> binder = new Binder<>(Contact.class);
+    private Contact contact;
 
     public ContactForm() {
         configureComponents();
@@ -42,75 +53,42 @@ public class ContactForm extends FormLayout {
     }
 
     private void configureComponents() {
-        /*
-         * Highlight primary actions.
-         *
-         * With Vaadin built-in styles you can highlight the primary save button
-         * and give it a keyboard shortcut for a better UX.
-         */
-        save.setStyleName(ValoTheme.BUTTON_PRIMARY);
-        save.setClickShortcut(ShortcutAction.KeyCode.ENTER);
+        save.addClickListener(e -> save());
+        cancel.addClickListener(e -> cancel());
+        binder.bindInstanceFields(this);
         setVisible(false);
     }
 
     private void buildLayout() {
         setSizeUndefined();
-        setMargin(true);
-
         HorizontalLayout actions = new HorizontalLayout(save, cancel);
-        actions.setSpacing(true);
-
-        addComponents(actions, firstName, lastName, phone, email, birthDate);
+        add(actions, firstName, lastName, phone, email, birthDate);
     }
 
-    /*
-     * Use any JVM language.
-     *
-     * Vaadin supports all languages supported by Java Virtual Machine 1.6+.
-     * This allows you to program user interface in Java 8, Scala, Groovy or any
-     * other language you choose. The new languages give you very powerful tools
-     * for organizing your code as you choose. For example, you can implement
-     * the listener methods in your compositions or in separate controller
-     * classes and receive to various Vaadin component events, like button
-     * clicks. Or keep it simple and compact with Lambda expressions.
-     */
-    public void save(Button.ClickEvent event) {
-        try {
-            // Commit the fields from UI to DAO
-            formFieldBindings.commit();
-
-            // Save DAO to backend with direct synchronous service API
-            getUI().service.save(contact);
-
-            String msg = String.format("Saved '%s %s'.", contact.getFirstName(),
-                    contact.getLastName());
-            Notification.show(msg, Type.TRAY_NOTIFICATION);
-            getUI().refreshContacts();
-        } catch (FieldGroup.CommitException e) {
-            // Validation exceptions could be shown here
+    private void save() {
+        if (contact != null) {
+            binder.writeBeanIfValid(contact);
+            if (isUIAvailable()) {
+                Notification.show(String.format("Saved '%s %s'.", contact.getFirstName(), contact.getLastName()));
+            }
+            if (listener != null) listener.onSave();
         }
     }
 
-    public void cancel(Button.ClickEvent event) {
-        // Place to call business logic.
-        Notification.show("Cancelled", Type.TRAY_NOTIFICATION);
-        getUI().contactList.select(null);
+    private void cancel() {
+        if (isUIAvailable()) {
+            Notification.show("Cancelled");
+        }
+        setVisible(false);
+        if (listener != null) listener.onCancel();
     }
 
-    void edit(Contact contact) {
+    public void edit(Contact contact) {
         this.contact = contact;
         if (contact != null) {
-            // Bind the properties of the contact POJO to fiels in this form
-            formFieldBindings = BeanFieldGroup.bindFieldsBuffered(contact,
-                    this);
+            binder.readBean(contact);
             firstName.focus();
         }
         setVisible(contact != null);
     }
-
-    @Override
-    public AddressbookUI getUI() {
-        return (AddressbookUI) super.getUI();
-    }
-
 }

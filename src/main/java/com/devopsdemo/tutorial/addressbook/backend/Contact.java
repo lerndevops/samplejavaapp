@@ -1,9 +1,7 @@
 package com.devopsdemo.tutorial.addressbook.backend;
 
-import org.apache.commons.beanutils.BeanUtils;
-
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 
 /**
  * A simple DTO for the address book example.
@@ -21,7 +19,7 @@ public class Contact implements Serializable, Cloneable {
     private String lastName = "";
     private String phone = "";
     private String email = "";
-    private Date birthDate;
+    private LocalDate birthDate;
 
     public Long getId() {
         return id;
@@ -63,21 +61,24 @@ public class Contact implements Serializable, Cloneable {
         this.email = email;
     }
 
-    public Date getBirthDate() {
+    public LocalDate getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(Date birthDate) {
+    public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
     }
 
     @Override
-    public Contact clone() throws CloneNotSupportedException {
-        try {
-            return (Contact) BeanUtils.cloneBean(this);
-        } catch (Exception ex) {
-            throw new CloneNotSupportedException();
-        }
+    public Contact clone() {
+        Contact cloned = new Contact();
+        cloned.setId(this.id);
+        cloned.setFirstName(this.firstName);
+        cloned.setLastName(this.lastName);
+        cloned.setPhone(this.phone);
+        cloned.setEmail(this.email);
+        cloned.setBirthDate(this.birthDate);
+        return cloned;
     }
 
     @Override
