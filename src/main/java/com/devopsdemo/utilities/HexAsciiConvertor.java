@@ -45,7 +45,7 @@ public class HexAsciiConvertor {
      */
     public static String convertAsciiToHex(String asciiValue) {
         if (asciiValue == null || asciiValue.isEmpty()) {
-            return null;
+            throw new IllegalArgumentException("Hex value cannot be null or empty");
         }
 
         var hex = new StringBuilder();

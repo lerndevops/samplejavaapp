@@ -79,6 +79,7 @@ public class ContactForm extends FormLayout {
         if (isUIAvailable()) {
             Notification.show("Cancelled");
         }
+        setVisible(false);
         if (listener != null) listener.onCancel();
     }
 

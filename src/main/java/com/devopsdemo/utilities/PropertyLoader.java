@@ -51,7 +51,15 @@ public class PropertyLoader {
         boolean loaded = false;
 
         try {
-            if (LOAD_AS_RESOURCE_BUNDLE) {
+            if (names.endsWith(".properties")) {
+                name = name.replace('.', '/');
+                try (InputStream in = loader != null ? loader.getResourceAsStream(name) : null) {
+                    if (in != null) {
+                        result.load(in);
+                        loaded = true;
+                    }
+                }
+            } else if (LOAD_AS_RESOURCE_BUNDLE) {
                 name = name.replace('/', '.');
                 try {
                     ResourceBundle rb = ResourceBundle.getBundle(name, Locale.getDefault(),
@@ -66,7 +74,6 @@ public class PropertyLoader {
                 if (!name.endsWith(SUFFIX)) {
                     name = name.concat(SUFFIX);
                 }
-
                 try (InputStream in = loader != null ? loader.getResourceAsStream(name) : null) {
                     if (in != null) {
                         result.load(in);

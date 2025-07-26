@@ -17,6 +17,7 @@ public class LoggerStackTraceUtil {
     public static String getStackTrace(Exception ex) {
         if (ex == null) throw new NullPointerException("Exception cannot be null");
         StringBuilder sb = new StringBuilder();
+        sb.append(ex.toString()).append(System.lineSeparator());
         for (StackTraceElement elem : ex.getStackTrace()) {
             sb.append(elem.toString()).append(System.lineSeparator());
         }
