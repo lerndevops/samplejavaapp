@@ -20,7 +20,7 @@ public class LoggerStackTraceUtil {
         for (StackTraceElement elem : ex.getStackTrace()) {
             sb.append(elem.toString()).append(System.lineSeparator());
         }
-        return sb.length() > 0;
+        return sb.toString();
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(LoggerStackTraceUtil.class);
