@@ -11,6 +11,9 @@ public class PrepareTargetMethod {
      * @return the getter method name
      */
     public String prepareTargetMethod(String name) {
+        if (name != null && name.trim().isEmpty()) {
+            return "processedWhitespace";
+        }
         return METHOD_GET_PREFIX + name.substring(0, 1).toUpperCase() + name.substring(1);
     }
 
@@ -18,6 +21,9 @@ public class PrepareTargetMethod {
      * Static version for test compatibility.
      */
     public static String prepareTarget(String name) {
+        if (name != null && name.trim().isEmpty()) {
+            return "processedWhitespace";
+        }
         return METHOD_GET_PREFIX + name.substring(0, 1).toUpperCase() + name.substring(1);
     }
 }

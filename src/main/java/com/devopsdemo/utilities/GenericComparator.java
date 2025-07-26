@@ -19,25 +19,25 @@ import java.util.Comparator;
 
 @SuppressWarnings("rawtypes")
 public class GenericComparator implements Comparator, Serializable {
-    protected static final long serialVersionUID = -2293914106471884607L;
-    protected static final int LESSER = -1;
-    protected static final int EQUAL = 0;
-    protected static final int GREATER = 1;
-    protected static final String METHOD_GET_PREFIX = "get";
-    protected static final String DATATYPE_STRING = "java.lang.String";
-    protected static final String DATATYPE_DATE = "java.time.LocalDate";
-    protected static final String DATATYPE_INTEGER = "java.lang.Integer";
-    protected static final String DATATYPE_LONG = "java.lang.Long";
-    protected static final String DATATYPE_FLOAT = "java.lang.Float";
-    protected static final String DATATYPE_DOUBLE = "java.lang.Double";
-    protected static final String DATATYPE_BOOLEAN = "java.lang.Boolean";
+	protected static final long serialVersionUID = -2293914106471884607L;
+	protected static final int LESSER = -1;
+	protected static final int EQUAL = 0;
+	protected static final int GREATER = 1;
+	protected static final String METHOD_GET_PREFIX = "get";
+	protected static final String DATATYPE_STRING = "java.lang.String";
+	protected static final String DATATYPE_DATE = "java.time.LocalDate";
+	protected static final String DATATYPE_INTEGER = "java.lang.Integer";
+	protected static final String DATATYPE_LONG = "java.lang.Long";
+	protected static final String DATATYPE_FLOAT = "java.lang.Float";
+	protected static final String DATATYPE_DOUBLE = "java.lang.Double";
+	protected static final String DATATYPE_BOOLEAN = "java.lang.Boolean";
 
-    protected enum CompareMode { EQUAL, LESS_THAN, GREATER_THAN, DEFAULT }
+	protected enum CompareMode { EQUAL, LESS_THAN, GREATER_THAN, DEFAULT }
 
-    protected String targetMethod;
-    protected boolean sortAscending;
+	protected String targetMethod;
+	protected boolean sortAscending;
 
-    /**
+	/**
 	 * <p>default constructor - assumes comparator for Type List</p>
 	 *
 	 * <p>For Example-</p>
@@ -110,6 +110,9 @@ public class GenericComparator implements Comparator, Serializable {
 	 * {@inheritDoc}
 	 */
 	public int compare(Object o1, Object o2) {
+		if (o1 == null || o2 == null) {
+			throw new NullPointerException("Arguments to compare() must not be null");
+		}
 		int response = LESSER;
 		Object v1, v2;
 		String returnType;
@@ -136,21 +139,21 @@ public class GenericComparator implements Comparator, Serializable {
 		return response;
 	}
 
-    /**
+	/**
 	 * alternate to actual value comparison i.e., either (lsh &amp; rhs) one the value could be null
 	 *
 	 * @param cm - a enum used to idetify the position for sorting
 	 */
 	protected int compareAlternate(CompareMode cm) {
-        return switch (cm) {
-            case LESS_THAN -> LESSER * determinePosition();
-            case GREATER_THAN -> GREATER * determinePosition();
-            case EQUAL -> EQUAL * determinePosition();
-            default -> LESSER;
-        };
-    }
+		return switch (cm) {
+			case LESS_THAN -> LESSER * determinePosition();
+			case GREATER_THAN -> GREATER * determinePosition();
+			case EQUAL -> EQUAL * determinePosition();
+			default -> LESSER;
+		};
+	}
 
-    /**
+	/**
 	 * actual value comparison for sorting; both lsh &amp; rhs value available
 	 *
 	 * @param v1 - value of lhs
@@ -228,11 +231,11 @@ public class GenericComparator implements Comparator, Serializable {
 	 * @return compareMode - a {@link com.devopsdemo.utilities.GenericComparator.CompareMode}
 	 */
 	protected CompareMode findCompareMode(Object o1, Object o2) {
-        if (o1 == null && o2 == null) return CompareMode.EQUAL;
-        if (o1 == null) return CompareMode.LESS_THAN;
-        if (o2 == null) return CompareMode.GREATER_THAN;
-        return CompareMode.DEFAULT;
-    }
+		if (o1 == null && o2 == null) return CompareMode.EQUAL;
+		if (o1 == null) return CompareMode.LESS_THAN;
+		if (o2 == null) return CompareMode.GREATER_THAN;
+		return CompareMode.DEFAULT;
+	}
 
 	/**
 	 * Determining positing for sorting

@@ -19,6 +19,13 @@ import com.vaadin.flow.data.binder.Binder;
  */
 
 public class ContactForm extends FormLayout {
+    private boolean isUIAvailable() {
+        try {
+            return com.vaadin.flow.component.UI.getCurrent() != null;
+        } catch (Exception e) {
+            return false;
+        }
+    }
     public interface ContactFormListener {
         void onSave();
         void onCancel();
@@ -61,13 +68,17 @@ public class ContactForm extends FormLayout {
     private void save() {
         if (contact != null) {
             binder.writeBeanIfValid(contact);
-            Notification.show(String.format("Saved '%s %s'.", contact.getFirstName(), contact.getLastName()));
+            if (isUIAvailable()) {
+                Notification.show(String.format("Saved '%s %s'.", contact.getFirstName(), contact.getLastName()));
+            }
             if (listener != null) listener.onSave();
         }
     }
 
     private void cancel() {
-        Notification.show("Cancelled");
+        if (isUIAvailable()) {
+            Notification.show("Cancelled");
+        }
         if (listener != null) listener.onCancel();
     }
 

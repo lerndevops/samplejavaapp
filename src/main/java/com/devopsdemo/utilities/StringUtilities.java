@@ -54,7 +54,7 @@ public class StringUtilities {
 	 * @return the reversed string
 	 */
 	public static String reverseString(String input) {
-		if (input == null) return null;
+		if (input == null) throw new NullPointerException("Input to reverseString must not be null");
 		return new StringBuilder(input).reverse().toString();
 	}
 
