@@ -1,6 +1,7 @@
 package com.devopsdemo.tutorial.addressbook;
 
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.ServletException;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
@@ -9,7 +10,6 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinServlet;
-import com.vaadin.flow.server.VaadinServletConfiguration;
 import com.devopsdemo.tutorial.addressbook.backend.Contact;
 import com.devopsdemo.tutorial.addressbook.backend.ContactService;
 
@@ -68,8 +68,12 @@ public class AddressbookUI extends VerticalLayout {
         contactForm.setVisible(false);
     }
 
-    @WebServlet(urlPatterns = "/*")
-    @VaadinServletConfiguration(ui = AddressbookUI.class, productionMode = false)
+    @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
     public static class MyUIServlet extends VaadinServlet {
+        @Override
+        protected void servletInitialized() throws ServletException {
+            super.servletInitialized();
+            getService().setClassLoader(getClass().getClassLoader());
+        }
     }
 }
