@@ -19,7 +19,7 @@ public class AddressbookUI extends VerticalLayout {
 
     private final TextField filter = new TextField("Filter contacts...");
     private final Grid<Contact> contactList = new Grid<>(Contact.class);
-    private final Button newContact = new Button("New contact");
+    final Button newContact = new Button("New contact");
     private final ContactForm contactForm = new ContactForm();
     private final ContactService service = ContactService.createDemoService();
 
