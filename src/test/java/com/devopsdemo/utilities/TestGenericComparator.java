@@ -6,20 +6,15 @@ import java.util.Collections;
 import com.devopsdemo.utilities.GenericComparator;
 import com.devopsdemo.utilities.CaseInsensitiveComparator;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-import org.junit.*; 
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Disabled;
+import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Seshagiri Sriram
  *
  */
-
 @SuppressWarnings({"rawtypes","unchecked"})
-
-public class TestGenericComparator
-    extends TestCase
-{
+public class TestGenericComparator {
         public void initialize(ArrayList myData) { 
                 UnitDTO d1 = new UnitDTO(); 
                 d1.setDeptID(100);d1.setEmpID(200);d1.setEmpName("Sriram");d1.setSpare(new Double(18.0));d1.setSpare2(new Double(18.0)); 
@@ -71,24 +66,14 @@ public class TestGenericComparator
      *
      * @param testName name of the test case
      */
-    public TestGenericComparator( String testName )
-    {
-        super( testName );
-    }
 
-    /**
-     * @return the suite of tests being tested
-     */
-    public static Test suite()
-    {
-        return new TestSuite( TestGenericComparator.class );
-    }
 
 
     /**
      * Test for Sorting by Emp Name Ascending
      */
-    public void testSortEmpNameAsc() {
+    @Test
+    void testSortEmpNameAsc() {
             ArrayList myData = new ArrayList(); initialize(myData);
             Collections.sort(myData, new GenericComparator("empName", true)); // sort ascending.. 
             assertEquals("Asma", ((UnitDTO)myData.get(0)).getEmpName()); 
@@ -97,19 +82,21 @@ public class TestGenericComparator
     /**
      * Test for Sorting by Emp Name Descending
      */
-    public void testSortEmpNameDesc() {
+    @Test
+    void testSortEmpNameDesc() {
             ArrayList myData = new ArrayList(); initialize(myData);
             Collections.sort(myData, new GenericComparator("empName", false)); // sort ascending..
                assertEquals("Vellman", ((UnitDTO)myData.get(0)).getEmpName()); 
             
     }
 
-	
+        
     /**
      * Test for Sorting by Emp ID Ascending
      */
-	 @Ignore("testSortIDAsc")
-    public void testSortEmpIDAsc() {
+    @Disabled("testSortIDAsc")
+    @Test
+    void testSortEmpIDAsc() {
             ArrayList myData = new ArrayList(); initialize(myData);
 
             Collections.sort(myData, new GenericComparator("empID", true)); // sort ascending.. 
@@ -121,7 +108,8 @@ public class TestGenericComparator
      * Test for Sorting besy Emp ID Descending...
      */
 
-    public void testSortEmpIDDesc() {
+    @Test
+    void testSortEmpIDDesc() {
             ArrayList myData = new ArrayList(); initialize(myData);
             Collections.sort(myData, new GenericComparator("empID", false)); // sort Descending 
             assertEquals("Somebody", ((UnitDTO)myData.get(0)).getEmpName()); 
@@ -131,7 +119,8 @@ public class TestGenericComparator
     /**
      * Test for Sorting by spare Ascending
      */
-    public void testSortEmpSpareAsc() {
+    @Test
+    void testSortEmpSpareAsc() {
             ArrayList myData = new ArrayList(); initialize(myData);
             Collections.sort(myData, new GenericComparator("spare", true)); // sort ascending 
             assertEquals("Vellman", ((UnitDTO)myData.get(0)).getEmpName()); 
@@ -140,7 +129,8 @@ public class TestGenericComparator
     /**
      * Test for Sorting by spare Descending
      */
-    public void testSortEmpSpareDesc() {
+    @Test
+    void testSortEmpSpareDesc() {
             ArrayList myData = new ArrayList(); initialize(myData);
             Collections.sort(myData, new GenericComparator("spare", false)); // sort Descending 
             assertEquals("Sriram", ((UnitDTO)myData.get(0)).getEmpName()); 
@@ -151,7 +141,8 @@ public class TestGenericComparator
     /**
      * Test for Sorting by spare2 Descending
      */
-    public void testSortEmpSpareDesc2() {
+    @Test
+    void testSortEmpSpareDesc2() {
             ArrayList myData = new ArrayList(); initialize(myData);
 
             Collections.sort(myData, new GenericComparator("spare2", false)); // sort Descending 
@@ -162,7 +153,8 @@ public class TestGenericComparator
     /**
      * Test for Sorting by spare2 Ascending
      */
-    public void testSortEmpSpareAsc2() {
+    @Test
+    void testSortEmpSpareAsc2() {
             ArrayList myData = new ArrayList(); initialize(myData);
 
             Collections.sort(myData, new GenericComparator("spare2", true)); // sort ascending 
@@ -173,7 +165,8 @@ public class TestGenericComparator
     /**
      * Test for Sorting by spare2 Ascending
      */
-        public void testSortEmpSpare2StringAsc() {
+    @Test
+    void testSortEmpSpare2StringAsc() {
             ArrayList myData = new ArrayList(); initialize2(myData);
             Collections.sort(myData, new GenericComparator("spare2", true)); // sort ascending 
             assertEquals("A", ((UnitDTO)myData.get(0)).getSpare2()); 
@@ -182,7 +175,8 @@ public class TestGenericComparator
     /**
      * Test for Sorting by spare2 Desc
      */
-    public void testSortEmpSpare2StringDesc() {
+    @Test
+    void testSortEmpSpare2StringDesc() {
             ArrayList myData = new ArrayList(); initialize2(myData);
             Collections.sort(myData, new GenericComparator("spare2", false)); // sort Descending 
             assertEquals("Z", ((UnitDTO)myData.get(0)).getSpare2()); 
@@ -190,7 +184,8 @@ public class TestGenericComparator
     /**
      * Test for Sorting by caseInsensitive Emp Name Ascending
      */
-    public void testSortEmpNameAscNewComparator() {
+    @Test
+    void testSortEmpNameAscNewComparator() {
             ArrayList myData = new ArrayList(); initialize3(myData);
             Collections.sort(myData, new CaseInsensitiveComparator("empName", true)); // sort ascending.. 
             assertEquals("Asma".toUpperCase(), ((UnitDTO)myData.get(0)).getEmpName().toUpperCase());
@@ -203,7 +198,8 @@ public class TestGenericComparator
     /**
      * Test for Sorting caseInsensitive by Emp Name Ascending
      */
-    public void testSortEmpNameAscNewComparator3Element() {
+    @Test
+    void testSortEmpNameAscNewComparator3Element() {
             ArrayList myData = new ArrayList(); initialize3(myData);
             Collections.sort(myData, new CaseInsensitiveComparator("empName", true)); // sort ascending.. 
             assertEquals("Asma".toUpperCase(), ((UnitDTO)myData.get(0)).getEmpName().toUpperCase());
@@ -215,7 +211,8 @@ public class TestGenericComparator
     /**
      * Test for Sorting caseInsensitive by Emp Name Descending
      */
-    public void testSortEmpNameDescNewComparator3Element() {
+    @Test
+    void testSortEmpNameDescNewComparator3Element() {
             ArrayList myData = new ArrayList(); initialize3(myData);
             Collections.sort(myData, new CaseInsensitiveComparator("empName", false)); // sort ascending.. 
             assertEquals("Asma".toUpperCase(), ((UnitDTO)myData.get(3)).getEmpName().toUpperCase());
@@ -224,7 +221,8 @@ public class TestGenericComparator
 
     }
 
-    public void testDoubleSort() {
+    @Test
+    void testDoubleSort() {
             ArrayList myData = new ArrayList();            
                 UnitDTO d1 = new UnitDTO(); 
                 d1.setDeptID(100);d1.setEmpID(200);d1.setEmpName("A");d1.setSpare(new Double(18.0));d1.setSpare2(new Double(18.0)); 
