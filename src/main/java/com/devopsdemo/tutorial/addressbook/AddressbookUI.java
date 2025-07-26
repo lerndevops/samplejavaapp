@@ -1,6 +1,6 @@
 package com.devopsdemo.tutorial.addressbook;
 
-import javax.servlet.annotation.WebServlet;
+import jakarta.servlet.annotation.WebServlet;
 
 import jakarta.servlet.ServletException;
 
