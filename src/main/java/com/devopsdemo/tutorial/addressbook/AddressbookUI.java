@@ -24,6 +24,16 @@ public class AddressbookUI extends VerticalLayout {
     private final ContactService service = ContactService.createDemoService();
 
     public AddressbookUI() {
+        contactForm.setListener(new ContactForm.ContactFormListener() {
+            @Override
+            public void onSave() {
+                refreshContacts();
+            }
+            @Override
+            public void onCancel() {
+                contactList.deselectAll();
+            }
+        });
         configureComponents();
         buildLayout();
     }

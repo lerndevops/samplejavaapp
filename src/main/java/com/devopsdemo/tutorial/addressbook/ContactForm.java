@@ -17,15 +17,25 @@ import com.vaadin.flow.data.binder.Binder;
  * Similarly named field by naming convention or customized
  * with @PropertyId annotation.
  */
-public class ContactForm extends FormLayout {
 
-    private final Button save = new Button("Save");
-    private final Button cancel = new Button("Cancel");
-    private final TextField firstName = new TextField("First name");
-    private final TextField lastName = new TextField("Last name");
-    private final TextField phone = new TextField("Phone");
-    private final TextField email = new TextField("Email");
-    private final DatePicker birthDate = new DatePicker("Birth date");
+public class ContactForm extends FormLayout {
+    public interface ContactFormListener {
+        void onSave();
+        void onCancel();
+    }
+
+    private ContactFormListener listener;
+    public void setListener(ContactFormListener listener) {
+        this.listener = listener;
+    }
+
+    public final Button save = new Button("Save");
+    public final Button cancel = new Button("Cancel");
+    public final TextField firstName = new TextField("First name");
+    public final TextField lastName = new TextField("Last name");
+    public final TextField phone = new TextField("Phone");
+    public final TextField email = new TextField("Email");
+    public final DatePicker birthDate = new DatePicker("Birth date");
 
     private final Binder<Contact> binder = new Binder<>(Contact.class);
     private Contact contact;
@@ -38,7 +48,6 @@ public class ContactForm extends FormLayout {
     private void configureComponents() {
         save.addClickListener(e -> save());
         cancel.addClickListener(e -> cancel());
-
         binder.bindInstanceFields(this);
         setVisible(false);
     }
@@ -53,13 +62,13 @@ public class ContactForm extends FormLayout {
         if (contact != null) {
             binder.writeBeanIfValid(contact);
             Notification.show(String.format("Saved '%s %s'.", contact.getFirstName(), contact.getLastName()));
-            getUI().ifPresent(ui -> ((AddressbookUI) ui).refreshContacts());
+            if (listener != null) listener.onSave();
         }
     }
 
     private void cancel() {
         Notification.show("Cancelled");
-        getUI().ifPresent(ui -> ((AddressbookUI) ui).contactList.deselectAll());
+        if (listener != null) listener.onCancel();
     }
 
     public void edit(Contact contact) {
