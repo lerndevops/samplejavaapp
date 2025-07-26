@@ -40,6 +40,15 @@ public class StringUtilities {
 	}
 
 	/**
+	 * Checks if a string is null or empty.
+	 * @param input the string to check
+	 * @return true if null or empty, false otherwise
+	 */
+	public static boolean isNullOrEmpty(String input) {
+		return input == null || input.isEmpty();
+	}
+
+	/**
 	 * Reverses the given string.
 	 * @param input the string to reverse
 	 * @return the reversed string

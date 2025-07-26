@@ -17,11 +17,11 @@ import com.devopsdemo.tutorial.addressbook.backend.ContactService;
 @Route("/")
 public class AddressbookUI extends VerticalLayout {
 
-    private final TextField filter = new TextField("Filter contacts...");
-    private final Grid<Contact> contactList = new Grid<>(Contact.class);
+    final TextField filter = new TextField("Filter contacts...");
+    final Grid<Contact> contactList = new Grid<>(Contact.class);
     final Button newContact = new Button("New contact");
-    private final ContactForm contactForm = new ContactForm();
-    private final ContactService service = ContactService.createDemoService();
+    final ContactForm contactForm = new ContactForm();
+    final ContactService service = ContactService.createDemoService();
 
     public AddressbookUI() {
         contactForm.setListener(new ContactForm.ContactFormListener() {

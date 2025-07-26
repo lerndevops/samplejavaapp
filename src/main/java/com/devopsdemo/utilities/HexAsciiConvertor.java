@@ -33,6 +33,13 @@ public class HexAsciiConvertor {
     }
 
     /**
+     * Alias for convertAsciiToHex to match test usage.
+     */
+    public static String asciiToHex(String asciiValue) {
+        return convertAsciiToHex(asciiValue);
+    }
+
+    /**
      * Converts ASCII values into hexadecimal.
      *
      * @param asciiValue the ASCII value
