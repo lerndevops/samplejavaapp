@@ -10,17 +10,15 @@ public class HexAsciiConvertor {
      */
     public static String convertHexToASCII(String hexValue) {
         if (hexValue == null || hexValue.isEmpty()) {
-            return null;
+            throw new IllegalArgumentException("Hex value cannot be null or empty");
         }
-
+        if (hexValue.length() % 2 != 0 || !hexValue.matches("[0-9A-Fa-f]+")) {
+            throw new IllegalArgumentException("Invalid hex string");
+        }
         var outputAscii = new StringBuilder();
-        try {
-            for (int i = 0; i < hexValue.length(); i += 2) {
-                var str = hexValue.substring(i, i + 2);
-                outputAscii.append((char) Integer.parseInt(str, 16));
-            }
-        } catch (Exception ex) {
-            LoggerStackTraceUtil.printErrorMessage(ex);
+        for (int i = 0; i < hexValue.length(); i += 2) {
+            var str = hexValue.substring(i, i + 2);
+            outputAscii.append((char) Integer.parseInt(str, 16));
         }
         return outputAscii.toString();
     }

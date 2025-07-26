@@ -13,7 +13,11 @@ public class GenericResourceBundle {
     }
 
     public static ResourceBundle getBundle(String baseName, java.util.Locale locale) {
-        return ResourceBundle.getBundle(baseName, locale);
+        try {
+            return ResourceBundle.getBundle(baseName, locale);
+        } catch (java.util.MissingResourceException e) {
+            throw new IllegalArgumentException("Resource bundle not found: " + baseName, e);
+        }
     }
 }
 

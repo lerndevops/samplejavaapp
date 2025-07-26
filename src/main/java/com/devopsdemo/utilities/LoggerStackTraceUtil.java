@@ -15,12 +15,12 @@ public class LoggerStackTraceUtil {
      * @return the stack trace string
      */
     public static String getStackTrace(Exception ex) {
-        if (ex == null) return "";
+        if (ex == null) throw new NullPointerException("Exception cannot be null");
         StringBuilder sb = new StringBuilder();
         for (StackTraceElement elem : ex.getStackTrace()) {
             sb.append(elem.toString()).append(System.lineSeparator());
         }
-        return sb.toString();
+        return sb.length() > 0;
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(LoggerStackTraceUtil.class);

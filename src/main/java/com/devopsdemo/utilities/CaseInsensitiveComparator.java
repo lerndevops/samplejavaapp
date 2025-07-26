@@ -80,10 +80,15 @@ public class CaseInsensitiveComparator extends GenericComparator {
         if ("java.lang.Object".equals(obj) && v1 != null) {
             obj = v1.getClass().getName();
         }
+        if (DATATYPE_STRING.equals(obj)) {
+            if (v1 == null || v2 == null || ((String)v1).isEmpty() || ((String)v2).isEmpty()) {
+                throw new StringIndexOutOfBoundsException("Cannot compare empty or null strings");
+            }
+            return ((String) v1).compareToIgnoreCase((String) v2) * determinePosition();
+        }
         return switch (obj) {
             case DATATYPE_INTEGER -> ((Integer) v1).compareTo((Integer) v2) * determinePosition();
             case DATATYPE_LONG -> ((Long) v1).compareTo((Long) v2) * determinePosition();
-            case DATATYPE_STRING -> ((String) v1).compareToIgnoreCase((String) v2) * determinePosition();
             case DATATYPE_DATE -> ((LocalDate) v1).compareTo((LocalDate) v2) * determinePosition();
             case DATATYPE_FLOAT -> ((Float) v1).compareTo((Float) v2) * determinePosition();
             case DATATYPE_DOUBLE -> ((Double) v1).compareTo((Double) v2) * determinePosition();

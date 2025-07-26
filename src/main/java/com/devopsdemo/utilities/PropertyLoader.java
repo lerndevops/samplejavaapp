@@ -48,13 +48,19 @@ public class PropertyLoader {
         name = name.endsWith(SUFFIX) ? name.substring(0, name.length() - SUFFIX.length()) : name;
 
         Properties result = new Properties();
+        boolean loaded = false;
 
         try {
             if (LOAD_AS_RESOURCE_BUNDLE) {
                 name = name.replace('/', '.');
-                ResourceBundle rb = ResourceBundle.getBundle(name, Locale.getDefault(),
-                        loader != null ? loader : ClassLoader.getSystemClassLoader());
-                rb.keySet().forEach(key -> result.put(key, rb.getString(key)));
+                try {
+                    ResourceBundle rb = ResourceBundle.getBundle(name, Locale.getDefault(),
+                            loader != null ? loader : ClassLoader.getSystemClassLoader());
+                    rb.keySet().forEach(key -> result.put(key, rb.getString(key)));
+                    loaded = true;
+                } catch (java.util.MissingResourceException e) {
+                    throw new IllegalArgumentException("Resource bundle not found: " + name, e);
+                }
             } else {
                 name = name.replace('.', '/');
                 if (!name.endsWith(SUFFIX)) {
@@ -64,6 +70,7 @@ public class PropertyLoader {
                 try (InputStream in = loader != null ? loader.getResourceAsStream(name) : null) {
                     if (in != null) {
                         result.load(in);
+                        loaded = true;
                     }
                 }
             }
@@ -71,9 +78,8 @@ public class PropertyLoader {
             LoggerStackTraceUtil.printErrorMessage(e);
         }
 
-        if (THROW_ON_LOAD_FAILURE && result.isEmpty()) {
-            LOG.error("Could not load [{}] as {}", name,
-                    LOAD_AS_RESOURCE_BUNDLE ? "a resource bundle" : "a classloader resource");
+        if (!loaded) {
+            throw new IllegalArgumentException("Could not load properties: " + name);
         }
 
         return result;
