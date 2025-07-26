@@ -9,6 +9,20 @@ import org.slf4j.LoggerFactory;
  */
 public class LoggerStackTraceUtil {
 
+    /**
+     * Returns the stack trace of an exception as a string.
+     * @param ex the exception
+     * @return the stack trace string
+     */
+    public static String getStackTrace(Exception ex) {
+        if (ex == null) return "";
+        StringBuilder sb = new StringBuilder();
+        for (StackTraceElement elem : ex.getStackTrace()) {
+            sb.append(elem.toString()).append(System.lineSeparator());
+        }
+        return sb.toString();
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger(LoggerStackTraceUtil.class);
     private final int maxCount = 3;
 
