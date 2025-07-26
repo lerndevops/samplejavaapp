@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: com.devopsdemo.utilities.TestPropertyHelper
--------------------------------------------------------------------------------
-Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.003 s -- in com.devopsdemo.utilities.TestPropertyHelper
