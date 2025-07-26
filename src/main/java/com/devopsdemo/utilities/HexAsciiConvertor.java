@@ -24,6 +24,13 @@ public class HexAsciiConvertor {
         }
         return outputAscii.toString();
     }
+    
+    /**
+     * Alias for convertHexToASCII to match test usage.
+     */
+    public static String hexToAscii(String hexValue) {
+        return convertHexToASCII(hexValue);
+    }
 
     /**
      * Converts ASCII values into hexadecimal.

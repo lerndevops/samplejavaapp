@@ -18,28 +18,38 @@ import org.slf4j.LoggerFactory;
  */
 public class StringUtilities {
 
-    private static final String COMMA_SEPARATOR = ",";
-    private static final String PARAM_SEPARATOR = "=";
-    private static final String TYPE_SEPARATOR = ";";
-    private static final String DATEFORMAT_SEPARATOR = "@";
-    private static final String CONVERTOR_METHOD_NAME = "valueOf";
-    private static final String DATE_TYPE = "date";
-    private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
-    private static final String STRING_TYPE = "string";
+	private static final String COMMA_SEPARATOR = ",";
+	private static final String PARAM_SEPARATOR = "=";
+	private static final String TYPE_SEPARATOR = ";";
+	private static final String DATEFORMAT_SEPARATOR = "@";
+	private static final String CONVERTOR_METHOD_NAME = "valueOf";
+	private static final String DATE_TYPE = "date";
+	private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+	private static final String STRING_TYPE = "string";
 
-    private static final Logger LOG = LoggerFactory.getLogger(StringUtilities.class);
+	private static final Logger LOG = LoggerFactory.getLogger(StringUtilities.class);
 
-    private static final HashMap<String, Class<?>> PRIMITIVE_NAME_TYPE_MAP = new HashMap<>();
+	private static final HashMap<String, Class<?>> PRIMITIVE_NAME_TYPE_MAP = new HashMap<>();
 
-    static {
-        PRIMITIVE_NAME_TYPE_MAP.put("boolean", Boolean.class);
-        PRIMITIVE_NAME_TYPE_MAP.put("int", Integer.class);
-        PRIMITIVE_NAME_TYPE_MAP.put("long", Long.class);
-        PRIMITIVE_NAME_TYPE_MAP.put("float", Float.class);
-        PRIMITIVE_NAME_TYPE_MAP.put("double", Double.class);
-    }
+	static {
+		PRIMITIVE_NAME_TYPE_MAP.put("boolean", Boolean.class);
+		PRIMITIVE_NAME_TYPE_MAP.put("int", Integer.class);
+		PRIMITIVE_NAME_TYPE_MAP.put("long", Long.class);
+		PRIMITIVE_NAME_TYPE_MAP.put("float", Float.class);
+		PRIMITIVE_NAME_TYPE_MAP.put("double", Double.class);
+	}
 
-    /**
+	/**
+	 * Reverses the given string.
+	 * @param input the string to reverse
+	 * @return the reversed string
+	 */
+	public static String reverseString(String input) {
+		if (input == null) return null;
+		return new StringBuilder(input).reverse().toString();
+	}
+
+	/**
 	 * given a comma separated string and type, returns an ArrayList of specific types 
 	 * @param strParamValueList The string (assumed to be comma separated). Usually meant for use in creating 
 	 *                          parameter values for passing in IN Clauses
@@ -48,15 +58,15 @@ public class StringUtilities {
 	 */
 	public static List<Object> convertStringToList(String strParamValueList,String type){
 		if (strParamValueList == null || strParamValueList.isBlank()) {
-            return null;
-        }
+			return null;
+		}
 
-        var list = new ArrayList<Object>();
-        var arr = strParamValueList.trim().split(COMMA_SEPARATOR);
-        for (var tmpString : arr) {
-            list.add(convert(tmpString, type));
-        }
-        return list;
+		var list = new ArrayList<Object>();
+		var arr = strParamValueList.trim().split(COMMA_SEPARATOR);
+		for (var tmpString : arr) {
+			list.add(convert(tmpString, type));
+		}
+		return list;
 	}
 	
 	/**
@@ -69,23 +79,23 @@ public class StringUtilities {
 	 */
 	public static HashMap<String, Object> createParameterList(String... strParamValueList){
 		var hMap = new HashMap<String, Object>();
-        for (var strArg : strParamValueList) {
-            String type = null;
-            if (strArg.contains(TYPE_SEPARATOR)) {
-                var parts = strArg.split(TYPE_SEPARATOR);
-                type = parts[1];
-                strArg = parts[0];
-            }
-            if (strArg.contains(PARAM_SEPARATOR)) {
-                var arr = strArg.split(PARAM_SEPARATOR);
-                if (arr[1].contains(COMMA_SEPARATOR)) {
-                    hMap.put(arr[0], convertStringToList(arr[1], type));
-                } else {
-                    hMap.put(arr[0], convert(arr[1], type));
-                }
-            }
-        }
-        return hMap;
+		for (var strArg : strParamValueList) {
+			String type = null;
+			if (strArg.contains(TYPE_SEPARATOR)) {
+				var parts = strArg.split(TYPE_SEPARATOR);
+				type = parts[1];
+				strArg = parts[0];
+			}
+			if (strArg.contains(PARAM_SEPARATOR)) {
+				var arr = strArg.split(PARAM_SEPARATOR);
+				if (arr[1].contains(COMMA_SEPARATOR)) {
+					hMap.put(arr[0], convertStringToList(arr[1], type));
+				} else {
+					hMap.put(arr[0], convert(arr[1], type));
+				}
+			}
+		}
+		return hMap;
 	}
 	
 	/**
@@ -97,8 +107,8 @@ public class StringUtilities {
 	private static Object convert(String value, String types) {
 
 		if (value == null || value.isBlank() || types == null || types.isBlank() || types.equalsIgnoreCase(STRING_TYPE)) {
-            return value;
-        }
+			return value;
+		}
 
 		var type = types.toLowerCase();
 		if (type.equals(DATE_TYPE)) {

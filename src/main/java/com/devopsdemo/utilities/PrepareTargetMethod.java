@@ -13,4 +13,11 @@ public class PrepareTargetMethod {
     public String prepareTargetMethod(String name) {
         return METHOD_GET_PREFIX + name.substring(0, 1).toUpperCase() + name.substring(1);
     }
+
+    /**
+     * Static version for test compatibility.
+     */
+    public static String prepareTarget(String name) {
+        return METHOD_GET_PREFIX + name.substring(0, 1).toUpperCase() + name.substring(1);
+    }
 }

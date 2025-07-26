@@ -11,5 +11,9 @@ public class GenericResourceBundle {
                  .map(rb::getString)
                  .orElse("");
     }
+
+    public static ResourceBundle getBundle(String baseName, java.util.Locale locale) {
+        return ResourceBundle.getBundle(baseName, locale);
+    }
 }
 
