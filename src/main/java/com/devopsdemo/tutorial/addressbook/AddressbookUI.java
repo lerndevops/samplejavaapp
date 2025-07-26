@@ -1,7 +1,8 @@
 package com.devopsdemo.tutorial.addressbook;
 
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.ServletException;
+
+import jakarta.servlet.ServletException;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
