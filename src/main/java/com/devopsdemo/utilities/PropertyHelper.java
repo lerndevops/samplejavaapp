@@ -1,97 +1,76 @@
 package com.devopsdemo.utilities;
 
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Properties;
-@SuppressWarnings("unchecked")
 
 /**
- * Helper Class to load Properties from a property file to be passed to caller for execution. 
- * Multiple properties can be loaded. 
- * Note that if same property is specified multiple times in a single file, there is no guaranteed "Winner" 
- * Also note in the case of loading multiple files and duplicate definition of properties across files, 
- * the last loaded property file "wins". 
- * The getProperty()/get() methods also returns "" silently if no such query exists.
- * @author Seshagiri Sriram
- * @version 1.0 
- * @see PropertyLoader
+ * Helper Class to load Properties from a property file to be passed to caller for execution.
+ * Multiple properties can be loaded.
+ * Note that if the same property is specified multiple times in a single file, there is no guaranteed "Winner".
+ * Also note in the case of loading multiple files and duplicate definition of properties across files,
+ * the last loaded property file "wins".
+ * The getProperty()/get() methods also return "" silently if no such query exists.
  */
-
 public final class PropertyHelper {
 
-/**
- * hMapProperties contains the hashmap of key/value pairs associated with each property 
- */
-protected final static HashMap<String, Object> HMAPPROPERTIES = new HashMap<String,Object>();
- 
+    /**
+     * hMapProperties contains the hashmap of key/value pairs associated with each property
+     */
+    protected static final HashMap<String, Object> HMAPPROPERTIES = new HashMap<>();
 
-/**
- * @param propertyFile
- * @return
- */
-public static HashMap<String, Object> loadProperties(String propertyFile) { 
-	 Properties properties = PropertyLoader.loadProperties(propertyFile); 
-	 Enumeration <String> keys = (Enumeration<String>) properties.propertyNames(); 
-		while (keys.hasMoreElements()) {
-		      String tmpKey = (String) keys.nextElement();
-		      HMAPPROPERTIES.put(tmpKey,properties.getProperty(tmpKey)); 	
-		      
-		    }
-	   return HMAPPROPERTIES; 
- }
+    /**
+     * Loads properties from a file into a HashMap.
+     *
+     * @param propertyFile the property file to load
+     * @return a HashMap containing the properties
+     */
+    public static HashMap<String, Object> loadProperties(String propertyFile) {
+        var properties = PropertyLoader.loadProperties(propertyFile);
+        properties.stringPropertyNames().forEach(
+            key -> HMAPPROPERTIES.put(key, properties.getProperty(key))
+        );
+        return HMAPPROPERTIES;
+    }
 
+    /**
+     * Retrieves the value of a property by name.
+     *
+     * @param propertyName the name of the property
+     * @return the value of the property, or an empty string if not found
+     */
+    public static String getProperty(String propertyName) {
+        try {
+            return (String) HMAPPROPERTIES.getOrDefault(propertyName, "");
+        } catch (Exception e) {
+            LoggerStackTraceUtil.printErrorMessage(e);
+            return "";
+        }
+    }
 
-/**
- * @param propertyName
- * @return
- */
-public static String getProperty(String propertyName){
-	 String propertyValue = ""; 
-	 try { 
-		 propertyValue = (String) HMAPPROPERTIES.get(propertyName); 
-	 }
-	 catch (Exception e){
-		 LoggerStackTraceUtil.printErrorMessage(e);
-		 propertyValue = ""; 
-	 }
-	 finally { 
-	 }
-	 return propertyValue; 
-	 }
+    /**
+     * Retrieves the value of a property by name, or a default value if the property is not found.
+     *
+     * @param propertyName the name of the property
+     * @param strDefault   the default value to return if the property is not found
+     * @return the value of the property, or the default value if not found
+     */
+    public static String getProperty(String propertyName, String strDefault) {
+        try {
+            return (String) HMAPPROPERTIES.getOrDefault(propertyName, strDefault);
+        } catch (Exception e) {
+            LoggerStackTraceUtil.printErrorMessage(e);
+            return strDefault;
+        }
+    }
 
-/**
- * Function used to get the default value if the property is null
- * @param propertyName - Name of the property
- * @param strDefault - Default value that needs to be returned if the value is null
- * @return Property value/Default Value as String
- */
-public static String getProperty(String propertyName,String strDefault){
-	 String propertyValue = ""; 
-	 try { 
-		 propertyValue = (String) HMAPPROPERTIES.get(propertyName); 
-		 // Check the property value is null/not
-		 if(propertyValue == null){
-			// Assign the default value to the propertyValue
-		   propertyValue=strDefault;
-		 }
-	 }
-	 catch (Exception e){
-		 LoggerStackTraceUtil.printErrorMessage(e);
-		 propertyValue = ""; 
-	 }
-	 finally { 
-	 }
-	 return propertyValue; 
-	 }
-
-/**
- * A convenience method (aliasing getProperty) 
- * @param propertyName property to be retrieved. 
- * @return
- * @see getProperty
- */
-public static String get(String propertyName){
-	return getProperty(propertyName); 
+    /**
+     * A convenience method (aliasing getProperty).
+     *
+     * @param propertyName the property to be retrieved
+     * @return the value of the property
+     */
+    public static String get(String propertyName) {
+        return getProperty(propertyName);
+    }
 }
- }
 
