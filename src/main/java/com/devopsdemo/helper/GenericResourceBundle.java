@@ -18,6 +18,7 @@ public class GenericResourceBundle {
                     .findFirst()
                     .map(rb::getString)
                     .orElse(null);
+            System.out.print("helllo");
             if (result == null) {
                 throw new IllegalArgumentException("Key not found: " + source);
             }
