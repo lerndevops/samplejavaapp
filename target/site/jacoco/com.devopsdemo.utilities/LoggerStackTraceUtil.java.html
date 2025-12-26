@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LoggerStackTraceUtil.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Vaadin Sampleapp example</a> &gt; <a href="index.source.html" class="el_package">com.devopsdemo.utilities</a> &gt; <span class="el_source">LoggerStackTraceUtil.java</span></div><h1>LoggerStackTraceUtil.java</h1><pre class="source lang-java linenums">package com.devopsdemo.utilities;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/// Class used to log the print stack trace items
+<span class="fc" id="L7">public class LoggerStackTraceUtil {</span>
+
+<span class="fc" id="L9">	private static final Logger LOG =LoggerFactory.getLogger(LoggerStackTraceUtil.class);  </span>
+<span class="fc" id="L10">	private int maxCount=3; </span>
+
+		/**
+	 * @param th - The exception that was thrown and to be logged. 
+	 * @return at very least the 1st error, if stacktrace is more than 1, then it also 
+	 *         returns the immediate cause
+	 *
+	 * Note this function cannot be made static for thread safety..         
+	 */
+	public String getErrorMessage(Throwable th){ 
+<span class="pc bpc" id="L20" title="1 of 2 branches missed.">		if (th==null) return &quot;&quot;; </span>
+<span class="fc" id="L21">		StringBuilder b = new StringBuilder(&quot;&quot;); </span>
+<span class="fc" id="L22">		String [] aryError = ExceptionUtils.getRootCauseStackTrace(th);</span>
+<span class="fc" id="L23">		b.append(aryError[0].trim()); </span>
+<span class="pc bpc" id="L24" title="1 of 2 branches missed.">		if (aryError.length &gt;= 2){</span>
+<span class="fc" id="L25">			b.append(String.format(&quot;%nCause:%s&quot;,aryError[1].trim())); </span>
+		}
+<span class="pc bpc" id="L27" title="1 of 2 branches missed.">		if (aryError.length &gt;= maxCount){</span>
+<span class="fc" id="L28">			b.append(String.format(&quot;%nCause:%s&quot;,aryError[2].trim())); </span>
+		}
+<span class="fc" id="L30">		return b.toString(); </span>
+	}
+
+	// Static Logger function
+	public static void printErrorMessage(Throwable th)
+	{
+		try{
+			  // log the error caused by
+<span class="nc" id="L38">			LOG.error(&quot;Error Cause: {}&quot;,th.getMessage());</span>
+			  // Conditional statement to check the length of the array
+<span class="nc" id="L40">			 int count=0;</span>
+<span class="nc bnc" id="L41" title="All 2 branches missed.">			 for(StackTraceElement stackTrace:th.getStackTrace()){</span>
+<span class="nc bnc" id="L42" title="All 2 branches missed.">				 if(count&lt;=25){</span>
+<span class="nc" id="L43">					 LOG.error(&quot;Error Class: {} and Line Number: {}&quot;,stackTrace.getClassName(),stackTrace.getLineNumber());</span>
+				 }else{
+					 break;
+				 }
+<span class="nc" id="L47">				 count++;</span>
+			 }
+		}
+<span class="nc" id="L50">		catch(Exception e)</span>
+		{
+			// log the exception error
+<span class="nc" id="L53">			LoggerStackTraceUtil.printErrorMessage(e);</span>
+<span class="nc" id="L54">		}</span>
+      
+	  
+<span class="nc" id="L57">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

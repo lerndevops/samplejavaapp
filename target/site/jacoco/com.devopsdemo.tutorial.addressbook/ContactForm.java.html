@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ContactForm.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Vaadin Sampleapp example</a> &gt; <a href="index.source.html" class="el_package">com.devopsdemo.tutorial.addressbook</a> &gt; <span class="el_source">ContactForm.java</span></div><h1>ContactForm.java</h1><pre class="source lang-java linenums">package com.devopsdemo.tutorial.addressbook;
+
+import com.vaadin.event.ShortcutAction;
+import com.devopsdemo.tutorial.addressbook.backend.Contact;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
+import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
+import com.vaadin.v7.data.fieldgroup.FieldGroup;
+import com.vaadin.v7.ui.DateField;
+import com.vaadin.v7.ui.TextField;
+
+/* Create custom UI Components.
+ *
+ * Create your own Vaadin components by inheritance and composition.
+ * This is a form component inherited from VerticalLayout. Use
+ * Use BeanFieldGroup to bind data fields from DTO to UI fields.
+ * Similarly named field by naming convention or customized
+ * with @PropertyId annotation.
+ */
+public class ContactForm extends FormLayout {
+
+<span class="nc" id="L26">    Button save = new Button(&quot;Save&quot;, this::save);</span>
+<span class="nc" id="L27">    Button cancel = new Button(&quot;Cancel&quot;, this::cancel);</span>
+<span class="nc" id="L28">    TextField firstName = new TextField(&quot;First name&quot;);</span>
+<span class="nc" id="L29">    TextField lastName = new TextField(&quot;Last name&quot;);</span>
+<span class="nc" id="L30">    TextField phone = new TextField(&quot;Phone&quot;);</span>
+<span class="nc" id="L31">    TextField email = new TextField(&quot;Email&quot;);</span>
+<span class="nc" id="L32">    DateField birthDate = new DateField(&quot;Birth date&quot;);</span>
+
+    Contact contact;
+
+    // Easily bind forms to beans and manage validation and buffering
+    BeanFieldGroup&lt;Contact&gt; formFieldBindings;
+
+<span class="nc" id="L39">    public ContactForm() {</span>
+<span class="nc" id="L40">        configureComponents();</span>
+<span class="nc" id="L41">        buildLayout();</span>
+<span class="nc" id="L42">    }</span>
+
+    private void configureComponents() {
+        /*
+         * Highlight primary actions.
+         *
+         * With Vaadin built-in styles you can highlight the primary save button
+         * and give it a keyboard shortcut for a better UX.
+         */
+<span class="nc" id="L51">        save.setStyleName(ValoTheme.BUTTON_PRIMARY);</span>
+<span class="nc" id="L52">        save.setClickShortcut(ShortcutAction.KeyCode.ENTER);</span>
+<span class="nc" id="L53">        setVisible(false);</span>
+<span class="nc" id="L54">    }</span>
+
+    private void buildLayout() {
+<span class="nc" id="L57">        setSizeUndefined();</span>
+<span class="nc" id="L58">        setMargin(true);</span>
+
+<span class="nc" id="L60">        HorizontalLayout actions = new HorizontalLayout(save, cancel);</span>
+<span class="nc" id="L61">        actions.setSpacing(true);</span>
+
+<span class="nc" id="L63">        addComponents(actions, firstName, lastName, phone, email, birthDate);</span>
+<span class="nc" id="L64">    }</span>
+
+    /*
+     * Use any JVM language.
+     *
+     * Vaadin supports all languages supported by Java Virtual Machine 1.6+.
+     * This allows you to program user interface in Java 8, Scala, Groovy or any
+     * other language you choose. The new languages give you very powerful tools
+     * for organizing your code as you choose. For example, you can implement
+     * the listener methods in your compositions or in separate controller
+     * classes and receive to various Vaadin component events, like button
+     * clicks. Or keep it simple and compact with Lambda expressions.
+     */
+    public void save(Button.ClickEvent event) {
+        try {
+            // Commit the fields from UI to DAO
+<span class="nc" id="L80">            formFieldBindings.commit();</span>
+
+            // Save DAO to backend with direct synchronous service API
+<span class="nc" id="L83">            getUI().service.save(contact);</span>
+
+<span class="nc" id="L85">            String msg = String.format(&quot;Saved '%s %s'.&quot;, contact.getFirstName(),</span>
+<span class="nc" id="L86">                    contact.getLastName());</span>
+<span class="nc" id="L87">            Notification.show(msg, Type.TRAY_NOTIFICATION);</span>
+<span class="nc" id="L88">            getUI().refreshContacts();</span>
+<span class="nc" id="L89">        } catch (FieldGroup.CommitException e) {</span>
+            // Validation exceptions could be shown here
+<span class="nc" id="L91">        }</span>
+<span class="nc" id="L92">    }</span>
+
+    public void cancel(Button.ClickEvent event) {
+        // Place to call business logic.
+<span class="nc" id="L96">        Notification.show(&quot;Cancelled&quot;, Type.TRAY_NOTIFICATION);</span>
+<span class="nc" id="L97">        getUI().contactList.select(null);</span>
+<span class="nc" id="L98">    }</span>
+
+    void edit(Contact contact) {
+<span class="nc" id="L101">        this.contact = contact;</span>
+<span class="nc bnc" id="L102" title="All 2 branches missed.">        if (contact != null) {</span>
+            // Bind the properties of the contact POJO to fiels in this form
+<span class="nc" id="L104">            formFieldBindings = BeanFieldGroup.bindFieldsBuffered(contact,</span>
+                    this);
+<span class="nc" id="L106">            firstName.focus();</span>
+        }
+<span class="nc bnc" id="L108" title="All 2 branches missed.">        setVisible(contact != null);</span>
+<span class="nc" id="L109">    }</span>
+
+    @Override
+    public AddressbookUI getUI() {
+<span class="nc" id="L113">        return (AddressbookUI) super.getUI();</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

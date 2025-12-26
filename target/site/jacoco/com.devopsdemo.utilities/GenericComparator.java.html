@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GenericComparator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Vaadin Sampleapp example</a> &gt; <a href="index.source.html" class="el_package">com.devopsdemo.utilities</a> &gt; <span class="el_source">GenericComparator.java</span></div><h1>GenericComparator.java</h1><pre class="source lang-java linenums">package com.devopsdemo.utilities;
+import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Comparator;
+import java.util.Date;
+
+/*****
+* Sorting - Generic Comparator
+*
+* @author Seshagiri Sriram
+* @version 1.0 
+* @since Janauary 12, 2015
+* 
+* This is an adaptation of a genenic comparator found on github linked from myjeeva.com 
+* Many thanks for the code!
+*/
+
+@SuppressWarnings(&quot;rawtypes&quot;)
+public class GenericComparator implements Comparator, Serializable {
+	protected static final long serialVersionUID = -2293914106471884607L;
+	protected static final int LESSER = -1;
+	protected static final int EQUAL = 0;
+	protected static final int GREATER = 1;
+	protected static final String METHOD_GET_PREFIX = &quot;get&quot;;
+	protected static final String DATATYPE_STRING = &quot;java.lang.String&quot;;
+	protected static final String DATATYPE_DATE = &quot;java.util.Date&quot;;
+	protected static final String DATATYPE_INTEGER = &quot;java.lang.Integer&quot;;
+	protected static final String DATATYPE_LONG = &quot;java.lang.Long&quot;;
+	protected static final String DATATYPE_FLOAT = &quot;java.lang.Float&quot;;
+	protected static final String DATATYPE_DOUBLE = &quot;java.lang.Double&quot;;
+	protected static final String DATATYPE_BOOLEAN = &quot;java.lang.Boolean&quot;;
+
+<span class="fc" id="L34">	protected enum CompareMode { EQUAL, LESS_THAN, GREATER_THAN, DEFAULT }</span>
+	// generic comparator attributes
+	protected String targetMethod;
+	protected boolean sortAscending;
+
+	/**
+	 * &lt;p&gt;default constructor - assumes comparator for Type List&lt;/p&gt;
+	 *
+	 * &lt;p&gt;For Example-&lt;/p&gt;
+	 * &lt;code&gt;List&amp;lt;Integer&amp;gt; aa = new ArrayList&amp;lt;Integer&amp;gt;();&lt;/code&gt;&lt;br /&gt;
+	 * &lt;code&gt;List&amp;lt;String&amp;gt; bb = new ArrayList&amp;lt;String&amp;gt;();&lt;/code&gt;&lt;br /&gt;
+	 * &lt;code&gt;List&amp;lt;Date&amp;gt; cc = new ArrayList&amp;lt;Date&amp;gt;();&lt;/code&gt;&lt;br /&gt;
+	 * &lt;p&gt;and so on..&lt;/p&gt;
+	 *
+	 * @param sortAscending - a {@link boolean} - &lt;code&gt;true&lt;/code&gt; ascending order or &lt;code&gt;false&lt;/code&gt; descending order
+	 */
+
+	public GenericComparator(boolean sortAscending) {
+<span class="nc" id="L52">		super();</span>
+<span class="nc" id="L53">		this.targetMethod = null;</span>
+<span class="nc" id="L54">		this.sortAscending = sortAscending;</span>
+<span class="nc" id="L55">	}</span>
+
+	/**
+	 * &lt;p&gt;constructor with &lt;code&gt;sortField&lt;/code&gt; parameter for Derived type of &lt;code&gt;Class&lt;/code&gt; default sorting is ascending order&lt;/p&gt;
+	 *
+	 * &lt;p&gt;For Example-&lt;/p&gt;
+	 * &lt;p&gt;&lt;code&gt;PersonVO person = new PersonVO();&lt;br /&gt;
+	 * person.setId(10001);&lt;br /&gt;
+	 * person.setName(&quot;Jacob&quot;);&lt;br /&gt;
+	 * person.setHeight(5.2F);&lt;br /&gt;
+	 * person.setEmailId(&quot;jacob@example.example&quot;);&lt;br /&gt;
+	 * person.setSalary(10500L);&lt;br /&gt;
+	 * person.setDob(new SimpleDateFormat(&quot;MMMM d, yyyy&quot;, Locale.ENGLISH).parse(&quot;Jan 1, 1970&quot;));&lt;br /&gt;&lt;/code&gt;&lt;br /&gt;
+	 * &lt;p&gt;and person2, person3, so on.. And Defining &amp;amp; adding all the created objects in to below list&lt;/p&gt;
+	 * &lt;p&gt;&lt;code&gt;List&amp;lt;PersonVO&amp;gt; persons = new ArrayList&amp;lt;PersonVO&amp;gt;();&lt;br /&gt;
+	 * persons.add(person1);&lt;br /&gt;
+	 * persons.add(person2);&lt;br /&gt;
+	 * persons.add(person3); &lt;/code&gt;and so on&lt;br /&gt;
+	 *
+	 * @param sortField - a {@link java.lang.String} - which field requires sorting; as per above example &quot;sorting required for &lt;code&gt;name&lt;/code&gt; field&quot;
+	 */
+	public GenericComparator(String sortField) {
+<span class="nc" id="L77">		super();</span>
+<span class="nc" id="L78">		this.targetMethod = prepareTargetMethod(sortField);</span>
+<span class="nc" id="L79">		this.sortAscending = true;</span>
+<span class="nc" id="L80">	}</span>
+
+	/**
+	 * &lt;p&gt;constructor with &lt;code&gt;sortField, sortAscending&lt;/code&gt; parameter for Derived type of &lt;code&gt;Class&lt;/code&gt;&lt;/p&gt;
+	 *
+	 * &lt;p&gt;For Example-&lt;/p&gt;
+	 * &lt;p&gt;&lt;code&gt;PersonVO person = new PersonVO();&lt;br /&gt;
+	 * person.setId(10001);&lt;br /&gt;
+	 * person.setName(&quot;Jacob&quot;);&lt;br /&gt;
+	 * person.setHeight(5.2F);&lt;br /&gt;
+	 * person.setEmailId(&quot;jacob@example.example&quot;);&lt;br /&gt;
+	 * person.setSalary(10500L);&lt;br /&gt;
+	 * person.setDob(new SimpleDateFormat(&quot;MMMM d, yyyy&quot;, Locale.ENGLISH).parse(&quot;Jan 1, 1970&quot;));&lt;br /&gt;&lt;/code&gt;&lt;br /&gt;
+	 * &lt;p&gt;and person2, person3, so on.. And Defining &amp;amp; adding all the created objects in to below list&lt;/p&gt;
+	 * &lt;p&gt;&lt;code&gt;List&amp;lt;PersonVO&amp;gt; persons = new ArrayList&amp;lt;PersonVO&amp;gt;();&lt;br /&gt;
+	 * persons.add(person1);&lt;br /&gt;
+	 * persons.add(person2);&lt;br /&gt;
+	 * persons.add(person3); &lt;/code&gt;and so on &lt;br /&gt;
+	 * @param sortField - a {@link java.lang.String} - which field requires sorting; as per above example &quot;sorting required for &lt;code&gt;name&lt;/code&gt; field&quot;
+	 * @param sortAscending - a {@link boolean} - &lt;code&gt;true&lt;/code&gt; ascending order or &lt;code&gt;false&lt;/code&gt; descending order
+	 */
+
+	public GenericComparator(String sortField, boolean sortAscending) {
+<span class="fc" id="L103">		super();</span>
+<span class="fc" id="L104">		this.targetMethod = prepareTargetMethod(sortField);</span>
+<span class="fc" id="L105">		this.sortAscending = sortAscending;</span>
+<span class="fc" id="L106">	}</span>
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public int compare(Object o1, Object o2) {
+<span class="fc" id="L112">		int response = LESSER;</span>
+		Object v1,v2;
+		String returnType;
+		try {
+<span class="pc bpc" id="L116" title="1 of 2 branches missed.">			if(this.targetMethod==null){</span>
+<span class="nc" id="L117">				v1=o1;</span>
+<span class="nc" id="L118">				v2=02;</span>
+<span class="nc" id="L119">				returnType=o1.getClass().getName();</span>
+			}else{
+<span class="fc" id="L121">				v1=getValue(o1);</span>
+<span class="fc" id="L122">				v2=getValue(o2);</span>
+<span class="fc" id="L123">				returnType=getMethod(o1).getReturnType().getName();</span>
+			}
+			
+<span class="fc" id="L126">			CompareMode cm = findCompareMode(v1, v2);</span>
+<span class="pc bpc" id="L127" title="1 of 2 branches missed.">			if (!cm.equals(CompareMode.DEFAULT)) {</span>
+<span class="nc" id="L128">				return compareAlternate(cm);</span>
+			}
+<span class="fc" id="L130">			response = compareActual(v1, v2, returnType);</span>
+		} 
+		// in JSE 1.7 the below is accepted
+		/*
+		catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException nsme) {
+		} */
+<span class="nc" id="L136">		catch (NoSuchMethodException e){</span>
+<span class="nc" id="L137">			LoggerStackTraceUtil.printErrorMessage(e);</span>
+<span class="nc" id="L138">		}catch (IllegalAccessException e){</span>
+<span class="nc" id="L139">			LoggerStackTraceUtil.printErrorMessage(e);</span>
+<span class="nc" id="L140">		}catch (InvocationTargetException e){</span>
+<span class="nc" id="L141">			LoggerStackTraceUtil.printErrorMessage(e);</span>
+<span class="pc" id="L142">		} </span>
+<span class="fc" id="L143">		return response;</span>
+	}
+	
+//---------------------------------------------------------------------------------//
+// Private methods used by {@link com.myjeeva.comparator.GenericComparator} //
+//---------------------------------------------------------------------------------//
+	/**
+	 * alternate to actual value comparison i.e., either (lsh &amp;amp; rhs) one the value could be null
+	 *
+	 * @param cm - a enum used to idetify the position for sorting
+	 */
+	protected int compareAlternate(CompareMode cm) {
+<span class="nc" id="L155">		int compareState = LESSER;	</span>
+<span class="nc bnc" id="L156" title="All 4 branches missed.">		switch(cm) {</span>
+			case LESS_THAN:
+<span class="nc" id="L158">				compareState = LESSER * determinePosition();</span>
+<span class="nc" id="L159">				break;</span>
+			case GREATER_THAN:
+<span class="nc" id="L161">				compareState = GREATER * determinePosition();</span>
+<span class="nc" id="L162">				break;</span>
+			case EQUAL:
+<span class="nc" id="L164">				compareState = EQUAL * determinePosition();</span>
+				break;
+		}
+<span class="nc" id="L167">		return compareState;</span>
+}
+	/**
+	 * actual value comparison for sorting; both lsh &amp;amp; rhs value available
+	 *
+	 * @param v1 - value of lhs
+	 * @param v2 - value of rhs
+	 * @param returnType - datatype of given values
+	 * @return int - compare return value
+	 */
+	private int compareActual(Object v1, Object v2, String returnType) {
+<span class="fc" id="L178">		String obj = returnType;</span>
+<span class="pc bpc" id="L179" title="1 of 4 branches missed.">		if (&quot;java.lang.Object&quot;.equals(obj) &amp;&amp; v1!=null) { </span>
+<span class="fc" id="L180">			 obj = v1.getClass().getName(); </span>
+		}
+<span class="fc" id="L182">		int acutal = LESSER;</span>
+		 
+<span class="fc bfc" id="L184" title="All 2 branches covered.">			if (obj.equals(DATATYPE_INTEGER)) {</span>
+<span class="fc" id="L185">				acutal = ((Integer) v1).compareTo((Integer) v2) * determinePosition();</span>
+<span class="pc bpc" id="L186" title="1 of 2 branches missed.">			} else if (obj.equals(DATATYPE_LONG)) {</span>
+<span class="nc" id="L187">				acutal = ((Long) v1).compareTo((Long) v2) * determinePosition();</span>
+<span class="fc bfc" id="L188" title="All 2 branches covered.">			} else if (obj.equals(DATATYPE_STRING)) {</span>
+<span class="fc" id="L189">				acutal = ((String) v1).compareTo((String) v2) * determinePosition();</span>
+<span class="pc bpc" id="L190" title="1 of 2 branches missed.">			} else if (obj.equals(DATATYPE_DATE)) {</span>
+<span class="nc" id="L191">				acutal = ((Date) v1).compareTo((Date) v2) * determinePosition();</span>
+<span class="pc bpc" id="L192" title="1 of 2 branches missed.">			} else if (obj.equals(DATATYPE_FLOAT)) {</span>
+<span class="nc" id="L193">				acutal = ((Float) v1).compareTo((Float) v2) * determinePosition();</span>
+<span class="pc bpc" id="L194" title="1 of 2 branches missed.">			} else if (obj.equals(DATATYPE_DOUBLE)) {</span>
+<span class="fc" id="L195">				acutal = ((Double) v1).compareTo((Double) v2) * determinePosition();</span>
+<span class="nc bnc" id="L196" title="All 2 branches missed.">			} else if (obj.equals(DATATYPE_BOOLEAN)) {</span>
+<span class="nc" id="L197">				acutal = ((Boolean) v1).compareTo((Boolean) v2) * determinePosition();</span>
+			}
+<span class="fc" id="L199">			return acutal;</span>
+	}
+	/**
+	 * preparing target name of getter method for given sort field
+	 *
+	 * @param name a {@link java.lang.String}
+	 * @return methodName a {@link java.lang.String}
+	 */
+	protected final static String prepareTargetMethod(String name) {
+<span class="fc" id="L208">		StringBuffer fieldName = new StringBuffer(METHOD_GET_PREFIX);</span>
+<span class="fc" id="L209">		fieldName.append(name.substring(0, 1).toUpperCase()).append(name.substring(1));</span>
+<span class="fc" id="L210">		return fieldName.toString();</span>
+	}
+	
+	/**
+	 * fetching method from &lt;code&gt;Class&lt;/code&gt; object through reflect
+	 *
+	 * @param obj - a {@link java.lang.Object} - input object
+	 * @return method - a {@link java.lang.reflect.Method}
+	 * @throws NoSuchMethodException
+	 */
+	protected final Method getMethod(Object obj) throws NoSuchMethodException {
+<span class="fc" id="L221">		return obj.getClass().getMethod(targetMethod, null);</span>
+	}
+
+	/**
+	 * dynamically invoking given method with given object through reflect
+	 *
+	 * @param method - a {@link java.lang.reflect.Method}
+	 * @param obj - a {@link java.lang.Object}
+	 * @return object - a {@link java.lang.Object} - return of given method
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
+	 */
+
+	private final static Object invoke(Method method, Object obj) throws InvocationTargetException, IllegalAccessException {
+<span class="fc" id="L235">		return method.invoke(obj, null);</span>
+	}
+	/**
+	 * fetching a value from given object
+	 *
+	 * @param obj - a {@link java.lang.Object}
+	 * @return object - a {@link java.lang.Object} - return of given method
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
+	 * @throws NoSuchMethodException
+	 */
+	protected Object getValue(Object obj) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+<span class="fc" id="L247">		return invoke(getMethod(obj), obj);</span>
+	}
+	/**
+	 * identifying the comparison mode for given value
+	 *
+	 * @param o1 - a {@link java.lang.Object}
+	 * @param o2 - a {@link java.lang.Object}
+	 * @return compareMode - a {@link com.devopsdemo.utilities.GenericComparator.CompareMode}
+	 */
+	protected CompareMode findCompareMode(Object o1, Object o2) {
+<span class="fc" id="L257">		CompareMode cm = CompareMode.LESS_THAN;</span>
+<span class="pc bpc" id="L258" title="3 of 6 branches missed.">		if(null != o1 &amp; null != o2) {</span>
+<span class="fc" id="L259">			cm = CompareMode.DEFAULT;</span>
+<span class="nc bnc" id="L260" title="All 6 branches missed.">		} else if (null == o1 &amp; null != o2) {</span>
+<span class="nc" id="L261">			cm = CompareMode.LESS_THAN;</span>
+<span class="nc bnc" id="L262" title="All 6 branches missed.">		} else if (null != o1 &amp; null == o2) {</span>
+<span class="nc" id="L263">			cm = CompareMode.GREATER_THAN;</span>
+<span class="nc bnc" id="L264" title="All 6 branches missed.">		} else if (null == o1 &amp; null == o2) {</span>
+<span class="nc" id="L265">			cm = CompareMode.EQUAL;</span>
+		}
+<span class="fc" id="L267">		return cm;</span>
+	}
+	/**
+	 * Determining positing for sorting
+	 *
+	 * @return -1 to change the sort order if appropriate.
+	 */
+	protected int determinePosition() {
+<span class="fc bfc" id="L275" title="All 2 branches covered.">		return sortAscending ? GREATER : LESSER;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

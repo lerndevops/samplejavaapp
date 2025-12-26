@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PropertyLoader.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Vaadin Sampleapp example</a> &gt; <a href="index.source.html" class="el_package">com.devopsdemo.utilities</a> &gt; <span class="el_source">PropertyLoader.java</span></div><h1>PropertyLoader.java</h1><pre class="source lang-java linenums">package com.devopsdemo.utilities;
+
+import java.io.InputStream;
+import java.util.Enumeration;
+import java.util.Locale;
+import java.util.Properties;
+import java.util.ResourceBundle;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+/**
+ * Looks up a resource named 'name' in the classpath. The resource must map
+ * to a file with .properties extention. The name is assumed to be absolute
+ * and can use either &quot;/&quot; or &quot;.&quot; for package segment separation with an
+ * optional leading &quot;/&quot; and optional &quot;.properties&quot; suffix. Thus, the
+ * following names refer to the same resource:
+ *
+ * @author Seshagiri Sriram
+ * @version 1.0 
+ * @param name classpath resource name [may not be null] 
+ * @param loader classloader through which to load the resource [null 
+ * is equivalent to the application loader]
+ * @return resource converted to java.util.Properties [may be null if the 
+ * resource was not found and THROW_ON_LOAD_FAILURE is false] 
+ * @throws IllegalArgumentException if the resource was not found and
+ * THROW_ON_LOAD_FAILURE is true 
+ */
+
+<span class="nc" id="L29">public class PropertyLoader </span>
+{
+
+	private static final boolean THROW_ON_LOAD_FAILURE = true; 
+	private static final boolean LOAD_AS_RESOURCE_BUNDLE = false; 
+	private static final String SUFFIX = &quot;.properties&quot;;
+
+	/**
+	 * Logger enabled for the current class
+	 */
+<span class="nc" id="L39">	private static final Logger LOG =LoggerFactory.getLogger(PropertyLoader.class);</span>
+
+	/** 
+	 * A convenience overload of {@link #loadProperties(String, ClassLoader)} 
+	 * that uses the current thread's context classloader. 
+	 */
+
+	public static Properties loadProperties (final String name) { 
+<span class="nc" id="L47">		return loadProperties (name, Thread.currentThread ().getContextClassLoader ()); </span>
+	}
+
+	@SuppressWarnings(&quot;rawtypes&quot;)
+	public static Properties loadProperties (String names, ClassLoader loader) 
+	{ 
+<span class="nc" id="L53">		String name = null;</span>
+		ClassLoader loaders;
+<span class="nc bnc" id="L55" title="All 2 branches missed.">		if (names == null) throw new IllegalArgumentException (&quot;null input: name&quot;); </span>
+<span class="nc bnc" id="L56" title="All 2 branches missed.">		if (names.startsWith (&quot;/&quot;)) name = names.substring (1); </span>
+<span class="nc bnc" id="L57" title="All 2 branches missed.">		if (names.endsWith (SUFFIX)) name = names.substring (0, names.length () - SUFFIX.length ()); </span>
+<span class="nc" id="L58">		Properties result = null; </span>
+<span class="nc" id="L59">		InputStream in = null; </span>
+		try { 
+<span class="nc bnc" id="L61" title="All 2 branches missed.">			if (loader == null)</span>
+<span class="nc" id="L62">				loaders = ClassLoader.getSystemClassLoader (); </span>
+			if (LOAD_AS_RESOURCE_BUNDLE) 
+			{ 
+				name = name.replace ('/', '.'); // Throws MissingResourceException on lookup failures: 
+				final ResourceBundle rb = ResourceBundle.getBundle (name, Locale.getDefault (), loaders); 
+				result = new Properties (); 
+				for (Enumeration keys = rb.getKeys (); keys.hasMoreElements ();) 
+				{ 
+					final String key = (String) keys.nextElement (); 
+					final String value = rb.getString (key); 
+					result.put (key, value); 
+				} 
+			} 
+			else { 
+<span class="nc" id="L76">				name = name.replace ('.', '/'); </span>
+<span class="nc bnc" id="L77" title="All 2 branches missed.">				if (! name.endsWith (SUFFIX)) name = name.concat (SUFFIX); // Returns null on lookup failures: </span>
+<span class="nc bnc" id="L78" title="All 2 branches missed.">				if(loader!=null)</span>
+<span class="nc" id="L79">					in = loader.getResourceAsStream (name); </span>
+<span class="nc bnc" id="L80" title="All 2 branches missed.">				if (in != null) { </span>
+<span class="nc" id="L81">					result = new Properties (); </span>
+<span class="nc" id="L82">					result.load (in); // Can throw IOException </span>
+				} 
+			} 
+		} 
+<span class="nc" id="L86">		catch (Exception e) { </span>
+<span class="nc" id="L87">			result = new Properties ();</span>
+<span class="nc" id="L88">			LoggerStackTraceUtil.printErrorMessage(e);</span>
+		} 
+		finally { 
+<span class="nc bnc" id="L91" title="All 2 branches missed.">			if (in != null) </span>
+				try 
+			{ 
+<span class="nc" id="L94">					in.close (); </span>
+			} 
+<span class="nc" id="L96">			catch (Throwable ignore) {} </span>
+		} 
+<span class="nc bnc" id="L98" title="All 2 branches missed.">		if (THROW_ON_LOAD_FAILURE &amp;&amp; (result == null)) </span>
+		{ 
+			// LOG exception... Do not re-throw this.. as I do not expect users to catch this exception :-) 
+			//throw new IllegalArgumentException (&quot;could not load [&quot; + name + &quot;]&quot;+ &quot; as &quot; + (LOAD_AS_RESOURCE_BUNDLE ? &quot;a resource bundle&quot; : &quot;a classloader resource&quot;));
+<span class="nc" id="L102">			result = new Properties ();</span>
+		} 
+<span class="nc" id="L104">		return result;  </span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

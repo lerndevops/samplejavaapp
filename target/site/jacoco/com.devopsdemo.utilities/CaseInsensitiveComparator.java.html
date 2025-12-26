@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CaseInsensitiveComparator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Vaadin Sampleapp example</a> &gt; <a href="index.source.html" class="el_package">com.devopsdemo.utilities</a> &gt; <span class="el_source">CaseInsensitiveComparator.java</span></div><h1>CaseInsensitiveComparator.java</h1><pre class="source lang-java linenums">package com.devopsdemo.utilities;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.Date;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class CaseInsensitiveComparator extends GenericComparator {
+
+        private static final long serialVersionUID = -6836701171640412573L;
+<span class="fc" id="L12">        private static final Logger LOG =LoggerFactory.getLogger(CaseInsensitiveComparator.class); </span>
+
+        /*
+         * This functiona call base GenericComparator(boolean sortAscending) class and set whether sorting is in ascending or descending
+         * sortAscending = true then ascending
+         * sortAscending = false then descending
+         */
+        public CaseInsensitiveComparator(boolean sortAscending) {
+<span class="nc" id="L20">                super(sortAscending);</span>
+<span class="nc" id="L21">                this.targetMethod = null;</span>
+<span class="nc" id="L22">                this.sortAscending = sortAscending;</span>
+<span class="nc" id="L23">        }</span>
+        /*
+         * This function call base GenericComparator(boolean sortField) class and set which field we need to sort and sort as asc
+         */
+        public CaseInsensitiveComparator(String sortField) {
+<span class="nc" id="L28">                super(sortField);</span>
+<span class="nc" id="L29">                this.targetMethod = prepareTargetMethod(sortField);</span>
+<span class="nc" id="L30">                this.sortAscending = true;</span>
+<span class="nc" id="L31">        }</span>
+        /*
+         * This function call base GenericComparator(boolean sortField,sortAscending) class and set which field we need to sort and sort based on the boolen value given
+         * sortAscending = true then ascending
+         * sortAscending = false then descending
+         */
+        public CaseInsensitiveComparator(String sortField, boolean sortAscending) {
+<span class="fc" id="L38">                super(sortField, sortAscending);</span>
+<span class="fc" id="L39">                this.targetMethod = prepareTargetMethod(sortField);</span>
+<span class="fc" id="L40">                this.sortAscending = sortAscending;</span>
+<span class="fc" id="L41">        }</span>
+
+        /*
+         * (non-Javadoc)
+         * @see com.devopsdemo.utilities.GenericComparator#compare(java.lang.Object, java.lang.Object)
+         */
+        public int compare(Object o1, Object o2) {
+<span class="fc" id="L48">                int response = LESSER;</span>
+                Object v1,v2;
+                String returnType;
+                try {
+<span class="pc bpc" id="L52" title="1 of 2 branches missed.">                        if(this.targetMethod==null){</span>
+<span class="nc" id="L53">                                v1=o1;</span>
+<span class="nc" id="L54">                                v2=02;</span>
+<span class="nc" id="L55">                                returnType=o1.getClass().getName();</span>
+                        }else{
+<span class="fc" id="L57">                                v1=getValue(o1);</span>
+<span class="fc" id="L58">                                v2=getValue(o2);</span>
+<span class="fc" id="L59">                                returnType=getMethod(o1).getReturnType().getName();</span>
+                        }
+                        
+<span class="fc" id="L62">                        CompareMode cm = findCompareMode(v1, v2);</span>
+<span class="pc bpc" id="L63" title="1 of 2 branches missed.">                        if (!cm.equals(CompareMode.DEFAULT)) {</span>
+<span class="nc" id="L64">                                return compareAlternate(cm);</span>
+                        }
+<span class="fc" id="L66">                        response = compareActual(v1, v2, returnType);</span>
+                } 
+<span class="nc" id="L68">                catch (NoSuchMethodException e){LOG.error(new LoggerStackTraceUtil().getErrorMessage(e));} </span>
+<span class="nc" id="L69">                catch (IllegalAccessException e){LOG.error(new LoggerStackTraceUtil().getErrorMessage(e));} </span>
+<span class="pc" id="L70">                catch (InvocationTargetException e){LOG.error(new LoggerStackTraceUtil().getErrorMessage(e));} </span>
+<span class="fc" id="L71">                return response;</span>
+        }
+        /*
+         * This Method is the overridden compareActual of GenericComparator. 
+         * If the data type is String then it convert string to upper case and compare it with other.
+         */
+        protected int compareActual(Object v1, Object v2, String returnType) {
+<span class="fc" id="L78">                String obj = returnType;</span>
+<span class="pc bpc" id="L79" title="3 of 4 branches missed.">                if (&quot;java.lang.Object&quot;.equals(obj) &amp;&amp; v1!=null) { </span>
+<span class="nc" id="L80">                        obj = v1.getClass().getName(); </span>
+                }
+<span class="fc" id="L82">                int acutal = LESSER; </span>
+<span class="pc bpc" id="L83" title="1 of 2 branches missed.">                if (obj.equals(DATATYPE_INTEGER)) {</span>
+<span class="nc" id="L84">                        acutal = ((Integer) v1).compareTo((Integer) v2) * determinePosition();</span>
+<span class="pc bpc" id="L85" title="1 of 2 branches missed.">                } else if (obj.equals(DATATYPE_LONG)) {</span>
+<span class="nc" id="L86">                        acutal = ((Long) v1).compareTo((Long) v2) * determinePosition();</span>
+<span class="pc bpc" id="L87" title="1 of 2 branches missed.">                } else if (obj.equals(DATATYPE_STRING)) {</span>
+<span class="fc" id="L88">                        acutal = ((String) v1).toUpperCase().compareTo(((String) v2).toUpperCase()) * determinePosition();</span>
+<span class="nc bnc" id="L89" title="All 2 branches missed.">                } else if (obj.equals(DATATYPE_DATE)) {</span>
+<span class="nc" id="L90">                        acutal = ((Date) v1).compareTo((Date) v2) * determinePosition();</span>
+<span class="nc bnc" id="L91" title="All 2 branches missed.">                } else if (obj.equals(DATATYPE_FLOAT)) {</span>
+<span class="nc" id="L92">                        acutal = ((Float) v1).compareTo((Float) v2) * determinePosition();</span>
+<span class="nc bnc" id="L93" title="All 2 branches missed.">                } else if (obj.equals(DATATYPE_DOUBLE)) {</span>
+<span class="nc" id="L94">                        acutal = ((Double) v1).compareTo((Double) v2) * determinePosition();</span>
+                }
+<span class="fc" id="L96">                return acutal;</span>
+        }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

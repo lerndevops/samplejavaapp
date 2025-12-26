@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AddressbookUI.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Vaadin Sampleapp example</a> &gt; <a href="index.source.html" class="el_package">com.devopsdemo.tutorial.addressbook</a> &gt; <span class="el_source">AddressbookUI.java</span></div><h1>AddressbookUI.java</h1><pre class="source lang-java linenums">package com.devopsdemo.tutorial.addressbook;
+
+import javax.servlet.annotation.WebServlet;
+
+import com.vaadin.annotations.Theme;
+import com.vaadin.annotations.Title;
+import com.vaadin.annotations.VaadinServletConfiguration;
+import com.vaadin.annotations.Widgetset;
+import com.vaadin.server.VaadinRequest;
+import com.vaadin.server.VaadinServlet;
+import com.devopsdemo.tutorial.addressbook.backend.Contact;
+import com.devopsdemo.tutorial.addressbook.backend.ContactService;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.v7.data.util.BeanItemContainer;
+import com.vaadin.v7.ui.Grid;
+import com.vaadin.v7.ui.TextField;
+
+/* User Interface written in Java.
+ *
+ * Define the user interface shown on the Vaadin generated web page by extending the UI class.
+ * By default, a new UI instance is automatically created when the page is loaded. To reuse
+ * the same instance, add @PreserveOnRefresh.
+ */
+@Title(&quot;sampleapp&quot;)
+@Theme(&quot;valo&quot;)
+@Widgetset(&quot;com.vaadin.v7.Vaadin7WidgetSet&quot;)
+<span class="nc" id="L30">public class AddressbookUI extends UI {</span>
+
+    /*
+     * Hundreds of widgets. Vaadin's user interface components are just Java
+     * objects that encapsulate and handle cross-browser support and
+     * client-server communication. The default Vaadin components are in the
+     * com.vaadin.ui package and there are over 500 more in
+     * vaadin.com/directory.
+     */
+<span class="nc" id="L39">    TextField filter = new TextField();</span>
+<span class="nc" id="L40">    Grid contactList = new Grid();</span>
+<span class="nc" id="L41">    Button newContact = new Button(&quot;New contact&quot;);</span>
+
+    // ContactForm is an example of a custom component class
+<span class="nc" id="L44">    ContactForm contactForm = new ContactForm();</span>
+
+    // ContactService is a in-memory mock DAO that mimics
+    // a real-world datasource. Typically implemented for
+    // example as EJB or Spring Data based service.
+<span class="nc" id="L49">    ContactService service = ContactService.createDemoService();</span>
+
+    /*
+     * The &quot;Main method&quot;.
+     *
+     * This is the entry point method executed to initialize and configure the
+     * visible user interface. Executed on every browser reload because a new
+     * instance is created for each web page loaded.
+     */
+    @Override
+    protected void init(VaadinRequest request) {
+<span class="nc" id="L60">        configureComponents();</span>
+<span class="nc" id="L61">        buildLayout();</span>
+<span class="nc" id="L62">    }</span>
+
+    private void configureComponents() {
+        /*
+         * Synchronous event handling.
+         *
+         * Receive user interaction events on the server-side. This allows you
+         * to synchronously handle those events. Vaadin automatically sends only
+         * the needed changes to the web page without loading a new page.
+         */
+<span class="nc" id="L72">        newContact.addClickListener(e -&gt; contactForm.edit(new Contact()));</span>
+
+<span class="nc" id="L74">        filter.setInputPrompt(&quot;Filter contacts...&quot;);</span>
+<span class="nc" id="L75">        filter.addTextChangeListener(e -&gt; refreshContacts(e.getText()));</span>
+
+<span class="nc" id="L77">        contactList</span>
+<span class="nc" id="L78">                .setContainerDataSource(new BeanItemContainer&lt;&gt;(Contact.class));</span>
+<span class="nc" id="L79">        contactList.setColumnOrder(&quot;firstName&quot;, &quot;lastName&quot;, &quot;email&quot;);</span>
+<span class="nc" id="L80">        contactList.removeColumn(&quot;id&quot;);</span>
+<span class="nc" id="L81">        contactList.removeColumn(&quot;birthDate&quot;);</span>
+<span class="nc" id="L82">        contactList.removeColumn(&quot;phone&quot;);</span>
+<span class="nc" id="L83">        contactList.setSelectionMode(Grid.SelectionMode.SINGLE);</span>
+<span class="nc" id="L84">        contactList.addSelectionListener(</span>
+<span class="nc" id="L85">                e -&gt; contactForm.edit((Contact) contactList.getSelectedRow()));</span>
+<span class="nc" id="L86">        refreshContacts();</span>
+<span class="nc" id="L87">    }</span>
+
+    /*
+     * Robust layouts.
+     *
+     * Layouts are components that contain other components. HorizontalLayout
+     * contains TextField and Button. It is wrapped with a Grid into
+     * VerticalLayout for the left side of the screen. Allow user to resize the
+     * components with a SplitPanel.
+     *
+     * In addition to programmatically building layout in Java, you may also
+     * choose to setup layout declaratively with Vaadin Designer, CSS and HTML.
+     */
+    private void buildLayout() {
+<span class="nc" id="L101">        HorizontalLayout actions = new HorizontalLayout(filter, newContact);</span>
+<span class="nc" id="L102">        actions.setWidth(&quot;100%&quot;);</span>
+<span class="nc" id="L103">        filter.setWidth(&quot;100%&quot;);</span>
+<span class="nc" id="L104">        actions.setExpandRatio(filter, 1);</span>
+
+<span class="nc" id="L106">        VerticalLayout left = new VerticalLayout(actions, contactList);</span>
+<span class="nc" id="L107">        left.setSizeFull();</span>
+<span class="nc" id="L108">        contactList.setSizeFull();</span>
+<span class="nc" id="L109">        left.setExpandRatio(contactList, 1);</span>
+
+<span class="nc" id="L111">        HorizontalLayout mainLayout = new HorizontalLayout(left, contactForm);</span>
+<span class="nc" id="L112">        mainLayout.setSizeFull();</span>
+<span class="nc" id="L113">        mainLayout.setExpandRatio(left, 1);</span>
+
+        // Split and allow resizing
+<span class="nc" id="L116">        setContent(mainLayout);</span>
+<span class="nc" id="L117">    }</span>
+
+    /*
+     * Choose the design patterns you like.
+     *
+     * It is good practice to have separate data access methods that handle the
+     * back-end access and/or the user interface updates. You can further split
+     * your code into classes to easier maintenance. With Vaadin you can follow
+     * MVC, MVP or any other design pattern you choose.
+     */
+    void refreshContacts() {
+<span class="nc" id="L128">        refreshContacts(filter.getValue());</span>
+<span class="nc" id="L129">    }</span>
+
+    private void refreshContacts(String stringFilter) {
+<span class="nc" id="L132">        contactList.setContainerDataSource(new BeanItemContainer&lt;&gt;(</span>
+<span class="nc" id="L133">                Contact.class, service.findAll(stringFilter)));</span>
+<span class="nc" id="L134">        contactForm.setVisible(false);</span>
+<span class="nc" id="L135">    }</span>
+
+    /*
+     * Deployed as a Servlet or Portlet.
+     *
+     * You can specify additional servlet parameters like the URI and UI class
+     * name and turn on production mode when you have finished developing the
+     * application.
+     */
+    @WebServlet(urlPatterns = &quot;/*&quot;)
+    @VaadinServletConfiguration(ui = AddressbookUI.class, productionMode = false)
+<span class="nc" id="L146">    public static class MyUIServlet extends VaadinServlet {</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StringUtilities.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Vaadin Sampleapp example</a> &gt; <a href="index.source.html" class="el_package">com.devopsdemo.utilities</a> &gt; <span class="el_source">StringUtilities.java</span></div><h1>StringUtilities.java</h1><pre class="source lang-java linenums">package com.devopsdemo.utilities;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
+/**
+ * An utility class that is used to split an string into an array list and providing mechanism to 
+ * build a HashMap value based on a variable number of arguements. 
+ * @author Seshagiri Sriram
+ * @version 1.0 
+ *
+ */
+<span class="nc" id="L23">public class StringUtilities {</span>
+	/**
+	 * The string separator for splitting a string into a list
+	 */
+	private final static String COMMA_SEPARATOR = &quot;,&quot;; 
+	/**
+	 * The String separator for splitting a parameter value. 
+	 * Parameters are expected to be in form: &quot;parametername=value&quot;
+	 */
+	private final static String PARAM_SEPARATOR = &quot;=&quot;;
+	/**
+	 * The String separator for splitting a parameter value into appropriate type. 
+	 * Required for HQL Queries, never for Native SQL queries
+	 * Parameters are expected to be in form: &quot;parametername=value:type (int, string, float, double)&quot;
+	 */
+	private final static String TYPE_SEPARATOR = &quot;;&quot;;
+	/**
+	 * The String separator for splitting a date parameter value into appropriate format. 
+	 */
+	private final static String DATEFORMAT_SEPARATOR = &quot;@&quot;;
+	
+	/**
+	 * The method to be invoked to convert a given String value to a specific Object type
+	 */
+	private final static String CONVERTOR_METHOD_NAME = &quot;valueOf&quot; ;
+	
+	/**
+	 * The String to represent the type &quot;DATE&quot;
+	 */
+	private final static String DATE_TYPE = &quot;date&quot; ;
+	
+	/**
+	 * Default Date format to which the date will be formatted
+	 */
+	
+	private final static String DATE_FORMAT = &quot;yyyy-MM-dd HH:mm:ss&quot; ;
+	/**
+	 * Variable to represent the type &quot;STRING&quot;
+	 */
+	private final static String STRING_TYPE =&quot;string&quot;;
+	/**
+	 * Logger enabled for the current class
+	 */
+<span class="nc" id="L66">	private static final Logger LOG =LoggerFactory.getLogger(StringUtilities.class);</span>
+
+	/** Primitive type name -&gt; class map. */
+<span class="nc" id="L69">	private static final HashMap&lt;String,Class&lt;?&gt;&gt; PRIMITIVE_NAME_TYPE_MAP = new HashMap&lt;String,Class&lt;?&gt;&gt;();</span>
+
+    /** Setup the primitives map. */
+	static {
+<span class="nc" id="L73">		PRIMITIVE_NAME_TYPE_MAP.put(&quot;boolean&quot;, Boolean.class);</span>
+<span class="nc" id="L74">		PRIMITIVE_NAME_TYPE_MAP.put(&quot;int&quot;, Integer.class);</span>
+<span class="nc" id="L75">		PRIMITIVE_NAME_TYPE_MAP.put(&quot;long&quot;, Long.class);</span>
+<span class="nc" id="L76">		PRIMITIVE_NAME_TYPE_MAP.put(&quot;float&quot;, Float.class);</span>
+<span class="nc" id="L77">		PRIMITIVE_NAME_TYPE_MAP.put(&quot;double&quot;, Double.class);</span>
+<span class="nc" id="L78">	}</span>
+
+	/**
+	 * given a comma separated string and type, returns an ArrayList of specific types 
+	 * @param strParamValueList The string (assumed to be comma separated). Usually meant for use in creating 
+	 *                          parameter values for passing in IN Clauses
+	 * @param type The type of the Arraylist passed
+	 * @return ArrayList if passed value is not null or empty, null otherwise
+	 */
+	public static List&lt;Object&gt; convertStringToList(String strParamValueList,String type){
+<span class="nc bnc" id="L88" title="All 4 branches missed.">		if (strParamValueList==null||strParamValueList.trim().isEmpty())  return null; </span>
+<span class="nc" id="L89">		ArrayList&lt;Object&gt; list = new ArrayList&lt;Object&gt;(); </span>
+<span class="nc" id="L90">	    String arr[] = strParamValueList.trim().split(COMMA_SEPARATOR); </span>
+<span class="nc bnc" id="L91" title="All 2 branches missed.">	    for(String tmpString: arr){</span>
+<span class="nc" id="L92">	    	list.add(convert(tmpString,type)); </span>
+	    }
+<span class="nc" id="L94">		return list; </span>
+	}
+	
+	/**
+	 * given a variable list of String parameters, forms a hash map 
+	 * @param strParamValueList Variable list of arguments each of format: key=kevalue;type.
+	 *                          For the type date,you can even pass the dateformat value as key=keyvalue@dateformat;type.
+	 *                          If dateformat is not passed default format yyyy-MM-dd HH:mm:ss will be taken.
+	 * @return HashMap  if no arguments are passed, returns an empty list, else populated hashmap
+	 * support only int, string, boolean, float, double, long, date
+	 */
+	public static HashMap&lt;String, Object&gt; createParameterList(String... strParamValueList){
+<span class="nc" id="L106">		HashMap&lt;String, Object&gt; hMap = new HashMap&lt;String, Object&gt;(); </span>
+<span class="nc bnc" id="L107" title="All 2 branches missed.">		for(String strArg: strParamValueList){</span>
+<span class="nc" id="L108">			String type = null;</span>
+<span class="nc bnc" id="L109" title="All 2 branches missed.">			if(strArg.contains(TYPE_SEPARATOR)){</span>
+<span class="nc" id="L110">				type = strArg.split(TYPE_SEPARATOR)[1]; </span>
+<span class="nc" id="L111">				strArg = strArg.split(TYPE_SEPARATOR)[0];</span>
+			}
+<span class="nc bnc" id="L113" title="All 2 branches missed.">			if (strArg.contains(PARAM_SEPARATOR)){</span>
+<span class="nc" id="L114">				String arr[]  = strArg.split(PARAM_SEPARATOR); </span>
+<span class="nc bnc" id="L115" title="All 2 branches missed.">				if (arr[1].contains(COMMA_SEPARATOR)){</span>
+<span class="nc" id="L116">					hMap.put(arr[0], convertStringToList(arr[1],type)); </span>
+				}
+				else {
+<span class="nc" id="L119">					hMap.put(arr[0], convert(arr[1],type)); </span>
+				}
+			}
+		}
+<span class="nc" id="L123">		return hMap; </span>
+	}
+	
+	/**
+	 * Converts the given String value to the intended type of Object
+	 * @param value The String value to be converted
+	 * @param type The type to which the value needs to be converted
+	 * @return Object Returns values as such if type or value is empty or null,else returns the converted Object
+	 */
+	private static Object convert(String value, String types) {
+
+<span class="nc" id="L134">		Class&lt;?&gt; finalClass = null ;</span>
+		//If value or type passed is null or empty or string return back value as such
+<span class="nc bnc" id="L136" title="All 10 branches missed.">		if ((value == null) || value.isEmpty() || types == null || types.isEmpty() || types.equalsIgnoreCase(STRING_TYPE))  return value;</span>
+
+<span class="nc" id="L138">		String type = types.toLowerCase();</span>
+		
+<span class="nc bnc" id="L140" title="All 2 branches missed.">		if (type.equals(DATE_TYPE)) return convertStringToDate(value);	</span>
+		
+		//Based on the passed type load the wrapper class. 
+		//If the given type not permitted returns values as such
+<span class="nc bnc" id="L144" title="All 2 branches missed.">		if(PRIMITIVE_NAME_TYPE_MAP.containsKey(type))</span>
+<span class="nc" id="L145">			finalClass = PRIMITIVE_NAME_TYPE_MAP.get(type);</span>
+				
+		try {
+			//Invoking the valueOf method of the Wrapper Class dynamically using reflection
+<span class="nc bnc" id="L149" title="All 2 branches missed.">			if(finalClass!=null){</span>
+<span class="nc" id="L150">				Method method = finalClass.getMethod(CONVERTOR_METHOD_NAME, String.class);</span>
+<span class="nc" id="L151">				int mods = method.getModifiers();</span>
+<span class="nc bnc" id="L152" title="All 4 branches missed.">				if (Modifier.isStatic(mods) &amp;&amp; Modifier.isPublic(mods)) {</span>
+<span class="nc" id="L153">					return method.invoke(null, value);</span>
+				}
+			}			
+		}
+<span class="nc" id="L157">		catch (NoSuchMethodException e) {</span>
+<span class="nc" id="L158">			LoggerStackTraceUtil.printErrorMessage(e);</span>
+		}
+<span class="nc" id="L160">		catch (IllegalAccessException e) {</span>
+			// this won't happen 
+<span class="nc" id="L162">			LoggerStackTraceUtil.printErrorMessage(e);</span>
+		}
+<span class="nc" id="L164">		catch (InvocationTargetException e) {</span>
+			// when this happens, the string cannot be converted to the intended type
+			// we are ignoring it here - the original string will be returned
+<span class="nc" id="L167">			LoggerStackTraceUtil.printErrorMessage(e);</span>
+<span class="nc" id="L168">		}</span>
+
+<span class="nc" id="L170">		return value;</span>
+	}
+
+	/**
+	 * Convert the given date value in string to date object
+	 * @param dateString The date to be formatted
+	 * @return Object Returns the corresponding Date object
+	 */
+	private static Object convertStringToDate(String dateString) {
+<span class="nc" id="L179">		String dateFormat = null;</span>
+<span class="nc" id="L180">		Object finalDate = null;</span>
+<span class="nc" id="L181">		String dateStringVal=null;</span>
+		//If the incoming date string contains the format as well parse using the given format, else parse using default
+<span class="nc bnc" id="L183" title="All 2 branches missed.">		dateFormat = (dateString.contains(DATEFORMAT_SEPARATOR)) ? dateString.split(DATEFORMAT_SEPARATOR)[1] : DATE_FORMAT ;</span>
+<span class="nc bnc" id="L184" title="All 2 branches missed.">		dateStringVal = (dateString.contains(DATEFORMAT_SEPARATOR)) ? dateString.split(DATEFORMAT_SEPARATOR)[0] : dateString ;</span>
+<span class="nc" id="L185">		SimpleDateFormat dateFormatter = new SimpleDateFormat(dateFormat);</span>
+		
+		try{
+<span class="nc" id="L188">			finalDate = dateFormatter.parse(dateStringVal);</span>
+<span class="nc" id="L189">		}catch(ParseException e){</span>
+<span class="nc" id="L190">			LoggerStackTraceUtil.printErrorMessage(e);</span>
+<span class="nc" id="L191">		}</span>
+<span class="nc" id="L192">		return finalDate;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>
